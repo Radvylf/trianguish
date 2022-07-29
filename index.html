@@ -2538,6 +2538,21 @@
                 };
                 
                 for (var i = 0; i < 12; i++) {
+                    pick_cont.children[i].onmouseover = ((op) => () => {
+                        if (is_pick != 2) {
+                            var s_grid = pos_to_s_grid(pick_pos);
+
+                            s_grid[pick_pos.s] = BigInt(op) * 18n + (s_grid[pick_pos.s] % 6n + 6n) % 6n;
+
+                            draw_pick(op, s_grid[pick_pos.s], pick_pos);
+
+                            if (!is_sim)
+                                push_param();
+
+                            draw();
+                        }
+                    })(i);
+                    
                     pick_cont.children[i].onclick = ((op) => () => {
                         var s_grid = pos_to_s_grid(pick_pos);
                         
