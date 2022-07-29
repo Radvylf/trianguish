@@ -1,0 +1,2975 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Trianguish</title>
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        
+        <style>
+            body {
+                width: 100vw;
+                height: 100vh;
+                
+                margin: 0;
+            }
+            
+            #display {
+                position: absolute;
+                top: 0;
+                left: 0;
+                
+                image-rendering: pixelated;
+            }
+            
+            #io {
+                position: absolute;
+                bottom: 12px;
+                right: 12px;
+                
+                width: /*432px*/ 396px;
+                height: /*288px*/ 156.5px;
+                
+                background-color: #ffffff;
+                border: 1px solid #aaaaaa;
+                padding: 18px;
+                
+                line-height: 1.25;
+            }
+            
+            #io h2 {
+                font-family: "Atkinson Hyperlegible", Arial, sans-serif;
+                font-size: 12px;
+                margin: 0;
+                margin-bottom: 12px;
+            }
+            
+            #input, #output {
+                font-family: "Roboto Mono", monospace;
+                font-size: 10px;
+                
+                padding: 6px;
+                width: 380px;
+                border: 1px solid #aaaaaa;
+                
+                line-height: 1.25;
+            }
+            
+            #input:focus, #output:focus {
+                border: 1px solid #66bbff;
+                outline: 1px solid #66bbff;
+            }
+            
+            #input {
+                margin-bottom: 12px;
+            }
+            
+            #input.wrong {
+                border: 1px solid #cc0000;
+                outline: 1px solid #cc0000;
+                background-color: #ffdddd;
+            }
+            
+            #output {
+                resize: none;
+            }
+            
+            #io .checkbox {
+                display: flex;
+                float: right;
+                user-select: none;
+            }
+            
+            #stringify {
+                margin: 0;
+                margin-right: 4px;
+            }
+            
+            #io label {
+                font-family: "Atkinson Hyperlegible", Arial, sans-serif;
+                font-size: 12px;
+            }
+            
+            #controls {
+                position: absolute;
+                bottom: 12px;
+                left: 12px;
+                
+                width: 144px;
+                height: 80px /* 164px */;
+                
+                background-color: #ffffff;
+                border: 1px solid #aaaaaa;
+                padding: 18px;
+                
+                line-height: 1.25;
+            }
+            
+            #stop_cont {
+                display: none;
+            }
+            
+            #controls button {
+                width: 100%;
+                
+                text-align: left;
+                
+                background-color: transparent;
+                border: none;
+                
+                font-family: "Atkinson Hyperlegible", Arial, sans-serif;
+                font-size: 11px;
+                padding: 0;
+                margin: 0;
+                margin-bottom: 4px;
+                
+                line-height: 1.25;
+                
+                display: block;
+                cursor: pointer;
+                
+                user-select: none;
+            }
+            
+            #controls .option {
+                color: #666666;
+            }
+            
+            #controls .option::before {
+                content: "[ ";
+            }
+            
+            #controls .option::after {
+                content: " ]";
+            }
+            
+            #controls hr {
+                border: none;
+                
+                background-color: #aaaaaa;
+                height: 1px;
+                
+                margin: 8px 0;
+            }
+            
+            #pick_info {
+                position: absolute;
+                
+                width: 252px;
+                height: 76.25px /* 61.25px */;
+                
+                background-color: #ffffff;
+                border: 1px solid #aaaaaa;
+                padding: 18px;
+                
+                line-height: 1.25;
+                
+                text-align: center;
+                
+                display: none;
+            }
+            
+            #dbg {
+                color: #666666;
+                
+                font-family: "Roboto Mono", monospace;
+                font-size: 9px;
+                
+                margin: 0;
+                margin-bottom: 12px;
+            }
+            
+            #op_id {
+                font-family: "Atkinson Hyperlegible", Arial, sans-serif;
+                font-size: 12px;
+                margin: 0;
+                margin-bottom: 8px;
+            }
+            
+            #op_info {
+                color: #444444;
+                
+                font-family: "Atkinson Hyperlegible", Arial, sans-serif;
+                font-size: 12px;
+                margin: 0;
+            }
+            
+            #pick_info .gray {
+                color: #606060;
+            }
+            
+            #pick_info .red {
+                color: #a71818;
+            }
+            
+            #pick_info .green {
+                color: #249b24;
+            }
+            
+            #pick_info .blue {
+                color: #1860a7;
+            }
+            
+            #pick_info .purple {
+                color: #6018a7;
+            }
+            
+            #pick_info .brown {
+                color: #81603e;
+            }
+            
+            #pick_ops {
+                position: absolute;
+                
+                width: 268px;
+                height: 76.75px;
+                
+                padding: 14px 10px;
+                
+                background-color: #ffffff;
+                border: 1px solid #aaaaaa;
+                
+                display: none;
+            }
+            
+            #pick_cont button {
+                width: 36.37px;
+                height: 31.5px;
+                
+                position: absolute;
+                
+                clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+                
+                padding: 0;
+                
+                background-color: transparent;
+                border: none;
+                
+                display: block;
+                cursor: pointer;
+                
+                user-select: none;
+            }
+            
+            #pick_0 {
+                top: 18px;
+                left: 11.51px;
+            }
+            
+            #pick_1 {
+                top: 18px;
+                left: 57.23px;
+            }
+            
+            #pick_2 {
+                top: 18px;
+                left: 102.95px;
+            }
+            
+            #pick_3 {
+                top: 18px;
+                left: 148.68px;
+            }
+            
+            #pick_4 {
+                top: 18px;
+                left: 194.4px;
+            }
+            
+            #pick_5 {
+                top: 18px;
+                left: 240.12px;
+            }
+            
+            #pick_6 {
+                top: 55.175px;
+                left: 11.51px;
+            }
+            
+            #pick_7 {
+                top: 55.175px;
+                left: 57.23px;
+            }
+            
+            #pick_8 {
+                top: 55.175px;
+                left: 102.95px;
+            }
+            
+            #pick_9 {
+                top: 55.175px;
+                left: 148.68px;
+            }
+            
+            #pick_10 {
+                top: 55.175px;
+                left: 194.4px;
+            }
+            
+            #pick_11 {
+                top: 55.175px;
+                left: 240.12px;
+            }
+            
+            #cons {
+                width: calc(100vw - 36px);
+                
+                display: none;
+                
+                position: absolute;
+                top: 18px;
+                left: 18px;
+                
+                background-color: transparent;
+                border: none;
+                
+                font-family: "Roboto Mono", monospace;
+                font-size: 10px;
+                font-weight: bold;
+                
+                padding: 0;
+                
+                line-height: 1.25;
+                
+                z-index: 8;
+            }
+            
+            #cons:focus {
+                outline: none;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="display"></canvas>
+        
+        <div id="controls">
+            <div id="start_cont">
+                <button id="start_sim">Start sim</button>
+            </div>
+            
+            <div id="stop_cont">
+                <button id="stop_sim">Stop sim</button>
+                <button id="stop_sim_copy">Stop sim, copy ops</button>
+
+                <hr/>
+
+                <button id="quick">Start</button>
+                <button id="tick">Tick</button>
+                <button id="tps">TPS: <span class="option">1 tick/s</span></button>
+            </div>
+            
+            <hr/>
+            
+            <button id="op_priority">Op priority: <span class="option">Random</span></button>
+            <button id="inf_ins">Mod 216: <span class="option">On</span></button>
+            <button id="stop_on_finish">Stop on finish: <span class="option">Off</span></button>
+        </div>
+        
+        <div id="io">
+            <h2>Input:</h2>
+            
+            <input type="text" id="input" placeholder="215 OR &quot;abc&quot; OR [1, 2, -1]"/>
+            
+            <div>
+                <div class="checkbox">
+                    <input type="checkbox" id="stringify"/>
+                    
+                    <label for="stringify">Stringify</label>
+                </div>
+                
+                <h2>Output:</h2>
+            </div>
+            
+            <textarea id="output" rows="4" readonly></textarea>
+        </div>
+        
+        <div id="pick_ops">
+            <canvas id="pick_display" width="268" height="76.75"></canvas>
+
+            <div id="pick_cont">
+                <button id="pick_0"></button>
+                <button id="pick_1"></button>
+                <button id="pick_2"></button>
+                <button id="pick_3"></button>
+                <button id="pick_4"></button>
+                <button id="pick_5"></button>
+                <button id="pick_6"></button>
+                <button id="pick_7"></button>
+                <button id="pick_8"></button>
+                <button id="pick_9"></button>
+                <button id="pick_10"></button>
+                <button id="pick_11"></button>
+            </div>
+        </div>
+
+        <div id="pick_info">
+            <div id="dbg">216n &middot; (0n, 0n, 0n)</div>
+
+            <h2 id="op_id">t-switch</h2>
+
+            <p id="op_info">If <span class="purple">_1</span> is non-NIL, <span class="green">_2</span> and <span class="blue">_0</span> act as a 2-wire.</p>
+        </div>
+        
+        <input type="text" id="cons"/>
+        
+        <script>
+            var init = async () => {
+                const COLORS = {
+                    gray: "#dfdfdf",
+                    red: "#ef8f8f",
+                    green: "#97e797",
+                    blue: "#8fbfef",
+                    purple: "#bf8fef",
+                    brown: "#d6bfa9",
+                };
+                
+                const COLOR_NIL = "gray";
+                const COLOR_INPUT = "green";
+                const COLOR_INPUT_2 = "purple";
+                const COLOR_OUTPUT = "blue";
+                const COLOR_BUILD = "brown";
+                
+                var pick_ops = document.getElementById("pick_ops");
+                var pick_cont = document.getElementById("pick_cont");
+                var pick_info = document.getElementById("pick_info");
+                
+                var pick_display = document.getElementById("pick_display");
+                var pick_c_2d = pick_display.getContext("2d");
+                
+                var draw_pick = (op, id, pos) => {
+                    const OFF_X = 8;
+                    const OFF_Y = 4 + 2.25;
+                    
+                    const SP_W = 1.5; // 2;
+                    const SP_D = SP_W / 3;
+                    const SP_X = 13.5; // 18;
+                    const SP_P = SP_X * (2 / 3); // 12;
+                    
+                    const FONT_S = 8.25; // 11;
+                    
+                    const OP_C = SP_X * (3 / 2);
+                    const OP_W = SP_X * Math.sqrt(3);
+                    const OP_P = (252 - OP_W * 6) / 5; // 6; // 8;
+                    const OP_P2 = 68.75 - (SP_X * (5 / 3) + FONT_S / 1.25) * 2; // 8;
+                    
+                    var conn = (point, DIR, color) => {
+                        point[0] += OFF_X;
+                        point[1] += OFF_Y;
+                        
+                        pick_c_2d.fillStyle = color;
+                        
+                        pick_c_2d.beginPath();
+                        pick_c_2d.moveTo(point[0], point[1]);
+                        pick_c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * -SP_W + Math.cos(DIR) * SP_D, point[1] - Math.sin(DIR + Math.PI / 2) * -SP_W - Math.sin(DIR) * SP_D);
+                        pick_c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * -SP_W + Math.cos(DIR) * SP_X, point[1] - Math.sin(DIR + Math.PI / 2) * -SP_W - Math.sin(DIR) * SP_X);
+                        pick_c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * SP_W + Math.cos(DIR) * SP_X, point[1] - Math.sin(DIR + Math.PI / 2) * SP_W - Math.sin(DIR) * SP_X);
+                        pick_c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * SP_W + Math.cos(DIR) * SP_D, point[1] - Math.sin(DIR + Math.PI / 2) * SP_W - Math.sin(DIR) * SP_D);
+                        pick_c_2d.closePath();
+                        
+                        pick_c_2d.fill();
+                    };
+                    
+                    var print = (point, DIR, info) => {
+                        point[0] += OFF_X;
+                        point[1] += OFF_Y;
+                        
+                        pick_c_2d.fillStyle = "#000000";
+                        
+                        var sp_p = SP_P;
+                        
+                        if (DIR % (Math.PI / 2) < 10 ** -10 || Math.PI / 2 - DIR % (Math.PI / 2) < 10 ** -10)
+                            sp_p += 3;
+                        
+                        pick_c_2d.fillText(info, point[0] + Math.cos(DIR) * sp_p, point[1] - Math.sin(DIR) * sp_p);
+                    };
+                    
+                    var arm = (point, S_DIR, T_DIR) => {
+                        point[0] += OFF_X;
+                        point[1] += OFF_Y;
+                        
+                        pick_c_2d.strokeStyle = "#000000";
+
+                        pick_c_2d.beginPath();
+                        pick_c_2d.moveTo(point[0] + Math.cos(S_DIR) * Math.hypot(SP_D, SP_W) * 2, point[1] - Math.sin(S_DIR) * Math.hypot(SP_D, SP_W) * 2);
+                        pick_c_2d.lineTo(point[0] + Math.cos(S_DIR) * Math.hypot(SP_D, SP_W) * 2 + Math.cos(T_DIR) * (SP_X - SP_W * 2), point[1] - Math.sin(S_DIR) * Math.hypot(SP_D, SP_W) * 2 - Math.sin(T_DIR) * (SP_X - SP_W * 2));
+                        
+                        pick_c_2d.stroke();
+                    };
+                    
+                    pick_c_2d.textAlign = "center";
+                    pick_c_2d.textBaseline = "middle";
+                    pick_c_2d.font = "bold " + FONT_S + "px 'Roboto Mono'"; // "bold 11px 'Roboto Mono'";
+                    
+                    pick_c_2d.clearRect(0, 0, pick_display.width, pick_display.height);
+                    
+                    conn([OP_W / 2, SP_X], Math.PI * 1 / 2, COLORS[COLOR_NIL]);
+                    conn([OP_W / 2, SP_X], Math.PI * 7 / 6, COLORS[COLOR_NIL]);
+                    conn([OP_W / 2, SP_X], Math.PI * 11 / 6, COLORS[COLOR_NIL]);
+                    
+                    conn([OP_P + OP_W * 3 / 2, SP_X], Math.PI * 1 / 2, COLORS[COLOR_OUTPUT]);
+                    conn([OP_P + OP_W * 3 / 2, SP_X], Math.PI * 7 / 6, COLORS[COLOR_OUTPUT]);
+                    conn([OP_P + OP_W * 3 / 2, SP_X], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_P + OP_W * 3 / 2, SP_X], Math.PI * 3 / 2, "0");
+
+                    conn([OP_P * 2 + OP_W * 5 / 2, SP_X], Math.PI * 1 / 2, COLORS[COLOR_NIL]);
+                    conn([OP_P * 2 + OP_W * 5 / 2, SP_X], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 2 + OP_W * 5 / 2, SP_X], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    conn([OP_P * 3 + OP_W * 7 / 2, SP_X], Math.PI * 1 / 2, COLORS[COLOR_OUTPUT]);
+                    conn([OP_P * 3 + OP_W * 7 / 2, SP_X], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 3 + OP_W * 7 / 2, SP_X], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    conn([OP_P * 4 + OP_W * 9 / 2, SP_X], Math.PI * 1 / 2, COLORS[COLOR_INPUT_2]);
+                    conn([OP_P * 4 + OP_W * 9 / 2, SP_X], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 4 + OP_W * 9 / 2, SP_X], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_P * 4 + OP_W * 9 / 2, SP_X], Math.PI * 3 / 2, "T");
+
+                    conn([OP_P * 5 + OP_W * 11 / 2, SP_X], Math.PI * 1 / 2, COLORS[COLOR_INPUT_2]);
+                    conn([OP_P * 5 + OP_W * 11 / 2, SP_X], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 5 + OP_W * 11 / 2, SP_X], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_P * 5 + OP_W * 11 / 2, SP_X], Math.PI * 3 / 2, "S");
+
+                    conn([OP_W / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 1 / 2, COLORS[COLOR_INPUT_2]);
+                    conn([OP_W / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_W / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_W / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 3 / 2, "N");
+
+                    conn([OP_P + OP_W * 3 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 1 / 2, COLORS[COLOR_INPUT]);
+                    conn([OP_P + OP_W * 3 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P + OP_W * 3 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_P + OP_W * 3 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 3 / 2, "+");
+
+                    conn([OP_P * 2 + OP_W * 5 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 1 / 2, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 2 + OP_W * 5 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 2 + OP_W * 5 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_P * 2 + OP_W * 5 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 3 / 2, "×");
+
+                    conn([OP_P * 3 + OP_W * 7 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 1 / 2, COLORS[COLOR_INPUT_2]);
+                    conn([OP_P * 3 + OP_W * 7 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 3 + OP_W * 7 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_P * 3 + OP_W * 7 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 3 / 2, "C");
+
+                    conn([OP_P * 4 + OP_W * 9 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 1 / 2, COLORS[COLOR_INPUT_2]);
+                    conn([OP_P * 4 + OP_W * 9 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 7 / 6, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 4 + OP_W * 9 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    print([OP_P * 4 + OP_W * 9 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 3 / 2, "I");
+
+                    conn([OP_P * 5 + OP_W * 11 / 2, OP_P2 + SP_X * 2 + SP_P+ FONT_S / 2], Math.PI * 1 / 2, COLORS[COLOR_INPUT]);
+                    conn([OP_P * 5 + OP_W * 11 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 7 / 6, COLORS[COLOR_BUILD]);
+                    conn([OP_P * 5 + OP_W * 11 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 11 / 6, COLORS[COLOR_OUTPUT]);
+
+                    arm([OP_P * 5 + OP_W * 11 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 5 / 6, Math.PI * 2 / 3 + (Math.PI * 1 / 2) + Math.PI * 4 / 3);
+                    arm([OP_P * 5 + OP_W * 11 / 2, OP_P2 + SP_X * 2 + SP_P + FONT_S / 2], Math.PI * 5 / 6, Math.PI * 2 / 3 + (Math.PI * 1 / 2));
+                    
+                    const FOC_R = 15.75;
+                    const FOC_S = FOC_R / Math.sqrt(3);
+                    
+                    var point = [
+                        OFF_X + OP_P * (op % 6) + OP_W * (op % 6 * 2 + 1) / 2,
+                        OFF_Y + (op < 6 ? SP_X : OP_P2 + SP_X * 2 + SP_P + FONT_S / 2)
+                    ];
+                    
+                    pick_c_2d.strokeStyle = "#000000";
+
+                    pick_c_2d.beginPath();
+                    pick_c_2d.moveTo(point[0] + Math.cos(Math.PI * 1 / 2) * FOC_R + Math.cos(Math.PI) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 2) * FOC_R + Math.sin(Math.PI) * FOC_S);
+                    pick_c_2d.lineTo(point[0] + Math.cos(Math.PI * 5 / 6) * FOC_R + Math.cos(Math.PI * 4 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 5 / 6) * FOC_R + Math.sin(Math.PI * 4 / 3) * FOC_S);
+                    pick_c_2d.lineTo(point[0] + Math.cos(Math.PI * 7 / 6) * FOC_R + Math.cos(Math.PI * 5 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 7 / 6) * FOC_R + Math.sin(Math.PI * 5 / 3) * FOC_S);
+                    pick_c_2d.lineTo(point[0] + Math.cos(Math.PI * 3 / 2) * FOC_R + Math.cos(0) * FOC_S, point[1] + Math.sin(Math.PI * 3 / 2) * FOC_R + Math.sin(0) * FOC_S);
+                    pick_c_2d.lineTo(point[0] + Math.cos(Math.PI * 11 / 6) * FOC_R + Math.cos(Math.PI * 1 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 11 / 6) * FOC_R + Math.sin(Math.PI * 1 / 3) * FOC_S);
+                    pick_c_2d.lineTo(point[0] + Math.cos(Math.PI * 1 / 6) * FOC_R + Math.cos(Math.PI * 2 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 6) * FOC_R + Math.sin(Math.PI * 2 / 3) * FOC_S);
+                    pick_c_2d.closePath();
+
+                    pick_c_2d.stroke();
+                    
+                    var dbg = document.getElementById("dbg");
+                    
+                    dbg.textContent = String(id) + "n" + " \xb7 (" + pos.q + "n, " + pos.r + "n, " + pos.s + "n)";
+                    
+                    var op_id = document.getElementById("op_id");
+                    
+                    op_id.textContent = ["nil", "constant", "2-wire", "splitter", "t-switch", "s-switch", "n-switch", "add", "mul", "cmp", "i/o", "builder"][op];
+                    
+                    var op_info = document.getElementById("op_info");
+                    
+                    op_info.innerHTML = [
+                        "Does nothing",
+                        "Outputs 0, 1, or -1 (215)",
+                        "Copies <span class=\"" + COLOR_INPUT + "\">_1</span> to <span class=\"" + COLOR_OUTPUT + "\">_2</span>",
+                        "Copies <span class=\"" + COLOR_INPUT + "\">_1</span> to both <span class=\"" + COLOR_OUTPUT + "\">_0</span> and <span class=\"" + COLOR_OUTPUT + "\">_2</span>",
+                        "If <span class=\"" + COLOR_INPUT_2 + "\">_0</span> is non-NIL, copies <span class=\"" + COLOR_OUTPUT + "\">_1</span> to <span class=\"" + COLOR_OUTPUT + "\">_2</span>",
+                        "Copies <span class=\"" + COLOR_INPUT + "\">_1</span> to <span class=\"" + COLOR_OUTPUT + "\">_2</span>, or if it is NIL, falls back to <span class=\"" + COLOR_INPUT_2 + "\">_0</span>",
+                        "Copies <span class=\"" + COLOR_INPUT + "\">_1</span> to <span class=\"" + COLOR_OUTPUT + "\">_2</span>, unless it is equal to <span class=\"" + COLOR_INPUT_2 + "\">_0</span>",
+                        "Adds <span class=\"" + COLOR_INPUT + "\">_0</span> and <span class=\"" + COLOR_INPUT + "\">_1</span>, and outputs to <span class=\"" + COLOR_OUTPUT + "\">_2</span>",
+                        "Multiplies <span class=\"" + COLOR_INPUT + "\">_0</span> and <span class=\"" + COLOR_INPUT + "\">_1</span>, and outputs to <span class=\"" + COLOR_OUTPUT + "\">_2</span>",
+                        "Compares <span class=\"" + COLOR_INPUT + "\">_1</span> to <span class=\"" + COLOR_INPUT_2 + "\">_0</span>, and outputs -1 (215, if <span class=\"" + COLOR_INPUT + "\">_1</span> &lt; <span class=\"" + COLOR_INPUT_2 + "\">_0</span>), 0 (if <span class=\"" + COLOR_INPUT + "\">_1</span> = <span class=\"" + COLOR_INPUT_2 + "\">_0</span>), or 1 (if <span class=\"" + COLOR_INPUT + "\">_1</span> &gt; <span class=\"" + COLOR_INPUT_2 + "\">_0</span>) to <span class=\"" + COLOR_OUTPUT + "\">_2</span>",
+                        "Prints <span class=\"" + COLOR_INPUT + "\">_1</span> as output if non-NIL, and takes user input to <span class=\"" + COLOR_OUTPUT + "\">_2</span> if <span class=\"" + COLOR_INPUT_2 + "\">_0</span> is non-NIL",
+                        "Modifies the op adjacent to _0 (the non-<span class=\"" + COLOR_BUILD + "\">_1</span> black-clad pin) if <span class=\"" + COLOR_BUILD + "\">_1</span> is non-NIL"
+                    ][op];
+                    
+                    pick_info.style.height = [9, 10, 11].includes(op) ? "" : "61.25px";
+                };
+                
+                var io = document.getElementById("io");
+                var io_input = document.getElementById("input");
+                var io_stringify = document.getElementById("stringify");
+                var io_output = document.getElementById("output");
+                
+                var ctrl = document.getElementById("controls");
+                var ctrl_start_cont = document.getElementById("start_cont");
+                var ctrl_stop_cont = document.getElementById("stop_cont");
+                var ctrl_start_sim = document.getElementById("start_sim");
+                var ctrl_stop_sim = document.getElementById("stop_sim");
+                var ctrl_stop_sim_copy = document.getElementById("stop_sim_copy");
+                var ctrl_quick = document.getElementById("quick");
+                var ctrl_tick = document.getElementById("tick");
+                var ctrl_tps = document.getElementById("tps");
+                var ctrl_op_priority = document.getElementById("op_priority");
+                var ctrl_inf_ins = document.getElementById("inf_ins");
+                var ctrl_stop_on_finish = document.getElementById("stop_on_finish");
+                
+                var input = [];
+                var stringify = false;
+                var output = [];
+                
+                var display = document.getElementById("display");
+                var c_2d = display.getContext("2d");
+                
+                var options = {
+                    op_priority: "random",
+                    inf_ins: !1,
+                    stop_on_finish: !1
+                };
+                
+                var is_sim = !1;
+                
+                var is_quick = !1;
+                var ci = 0;
+                var tps = 1;
+                
+                var width = 63 / (Math.sqrt(3) / 2);
+                
+                var grid = new Map();
+                var sim_grid = new Map();
+                
+                var disp_mid = [0, 0];
+                
+                var is_pick = 0;
+                var pick_pos = null;
+                
+                var focus = {
+                    q: 0n,
+                    r: 0n,
+                    s: 0n
+                };
+                
+                var mc = !1;
+                var p_mc = !1;
+                
+                var p_focus = null;
+                
+                var right_copy_pos = null;
+                
+                // links: input, stringify, options, is_quick, tps, grid
+                // additional: focus, cam
+                
+                // coords: skewed square grid, [q, r, S], q is x, r is y, S is bottom (0) or top (1)
+                
+                var pos_to_point = (pos) => [
+                     Number(pos.q) * width + Number(pos.r) * (width / 2) + Number(pos.s) * (width / 2) + window.innerWidth / 2 - disp_mid[0],
+                     -(Number(pos.r) * width * (Math.sqrt(3) / 2) + Number(pos.s) * width * (Math.sqrt(3) / 6) - disp_mid[1]) + window.innerHeight / 2
+                ];
+                
+                var pos_to_id = (pos) => {
+                    var c_grid = is_sim ? sim_grid : grid;
+                    
+                    return c_grid.has(pos.q) && c_grid.get(pos.q).has(pos.r) ? c_grid.get(pos.q).get(pos.r)[pos.s] : 0n;
+                };
+                
+                var pos_to_s_grid = (pos, c_grid = is_sim ? sim_grid : grid) => {
+                    var row, s_grid;
+                    
+                    if (c_grid.has(pos.q)) {
+                        row = c_grid.get(pos.q);
+
+                        if (row.has(pos.r)) {
+                            s_grid = row.get(pos.r);
+                        } else {
+                            row.set(pos.r, s_grid = is_sim ? [0n, 0n, null, null] : [0n, 0n]);
+                        }
+                    } else {
+                        c_grid.set(pos.q, row = new Map());
+                        row.set(pos.r, s_grid = is_sim ? [0n, 0n, null, null] : [0n, 0n]);
+                    }
+                    
+                    return s_grid;
+                };
+                
+                var to_phys_pin = (pos, id, n) => {
+                    var or = (id % 6n + 6n) % 6n;
+                    
+                    return ((n == 0n || or % 2n == 0n ? n : 3n - n) + or / 2n) % 3n;
+                };
+                
+                var from_phys_pin = (pos, id, n) => {
+                    var or = (id % 6n + 6n) % 6n;
+                    var phys = (n - or / 2n + 3n) % 3n;
+                    
+                    return phys == 0n || or % 2n == 0n ? phys : 3n - phys;
+                };
+                
+                var find_phys_pin_pos = (pos, n) => {
+                    if (pos.s == 0n) {
+                        return [{ q: pos.q, r: pos.r - 1n, s: 1n - pos.s }, { q: pos.q, r: pos.r, s: 1n - pos.s }, { q: pos.q - 1n, r: pos.r, s: 1n - pos.s }][n];
+                    } else {
+                        return [{ q: pos.q, r: pos.r + 1n, s: 1n - pos.s }, { q: pos.q, r: pos.r, s: 1n - pos.s }, { q: pos.q + 1n, r: pos.r, s: 1n - pos.s }][n];
+                    }
+                };
+                
+                var find_pin_pos = (pos, id, n) => find_phys_pin_pos(pos, to_phys_pin(pos, id, n));
+                
+                var n216 = (x) => (x % 216n + 216n) % 216n;
+                
+                var draw_diagram = (pos) => {
+                    const SP_W = 2;
+                    const SP_D = SP_W / 3;
+                    const SP_X = 18;
+                    const SP_P = 12;
+                    
+                    var id = pos_to_id(pos);
+                    
+                    var conn = (DIR, color) => {
+                        var point = pos_to_point(pos);
+                        
+                        c_2d.fillStyle = color;
+                        
+                        c_2d.beginPath();
+                        c_2d.moveTo(point[0], point[1]);
+                        c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * -SP_W + Math.cos(DIR) * SP_D, point[1] - Math.sin(DIR + Math.PI / 2) * -SP_W - Math.sin(DIR) * SP_D);
+                        c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * -SP_W + Math.cos(DIR) * SP_X, point[1] - Math.sin(DIR + Math.PI / 2) * -SP_W - Math.sin(DIR) * SP_X);
+                        c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * SP_W + Math.cos(DIR) * SP_X, point[1] - Math.sin(DIR + Math.PI / 2) * SP_W - Math.sin(DIR) * SP_X);
+                        c_2d.lineTo(point[0] + Math.cos(DIR + Math.PI / 2) * SP_W + Math.cos(DIR) * SP_D, point[1] - Math.sin(DIR + Math.PI / 2) * SP_W - Math.sin(DIR) * SP_D);
+                        c_2d.closePath();
+                        
+                        c_2d.fill();
+                    };
+                    
+                    var print = (info) => {
+                        const DIR = Number(n216(id) % 6n / 2n) * Math.PI * 2 / 3 + (pos.s == 0n ? Math.PI * 3 / 2 : Math.PI * 1 / 2) + Math.PI;
+                        
+                        var point = pos_to_point(pos);
+                        
+                        c_2d.fillStyle = "#000000";
+                        
+                        var sp_p = SP_P;
+                        
+                        if (DIR % (Math.PI / 2) < 10 ** -10 || Math.PI / 2 - DIR % (Math.PI / 2) < 10 ** -10)
+                            sp_p += 3;
+                        
+                        c_2d.fillText(info, point[0] + Math.cos(DIR) * sp_p, point[1] - Math.sin(DIR) * sp_p);
+                    };
+                    
+                    var print_big = (info) => {
+                        const DIR = Number(n216(id) % 6n / 2n) * Math.PI * 2 / 3 + (pos.s == 0n ? Math.PI * 3 / 2 : Math.PI * 1 / 2) + Math.PI * 1 / 3;
+                        
+                        var point = pos_to_point(pos);
+                        
+                        c_2d.fillStyle = "#666666";
+                        
+                        var sp_p = SP_P;
+                        
+                        if (DIR % (Math.PI / 2) < 10 ** -10 || Math.PI / 2 - DIR % (Math.PI / 2) < 10 ** -10) {
+                            sp_p += 3;
+                        } else {
+                            sp_p -= 3;
+                            
+                            c_2d.textAlign = ((DIR - Math.PI / 2) % (Math.PI * 2) + (Math.PI * 2)) % (Math.PI * 2) < Math.PI ? "right" : "left";
+                        }
+                            
+                        c_2d.font = "9px 'Roboto Mono'";
+                        
+                        c_2d.fillText(info == null ? "NIL" : info, point[0] + Math.cos(DIR) * sp_p, point[1] - Math.sin(DIR) * sp_p);
+                        
+                        c_2d.textAlign = "center";
+                        c_2d.font = "bold 11px 'Roboto Mono'";
+                    };
+                    
+                    var arm = (S_DIR, T_DIR) => {
+                        var point = pos_to_point(pos);
+                        
+                        c_2d.strokeStyle = "#000000";
+
+                        c_2d.beginPath();
+                        c_2d.moveTo(point[0] + Math.cos(S_DIR) * Math.hypot(SP_D, SP_W) * 2, point[1] - Math.sin(S_DIR) * Math.hypot(SP_D, SP_W) * 2);
+                        c_2d.lineTo(point[0] + Math.cos(S_DIR) * Math.hypot(SP_D, SP_W) * 2 + Math.cos(T_DIR) * (SP_X - SP_W * 2), point[1] - Math.sin(S_DIR) * Math.hypot(SP_D, SP_W) * 2 - Math.sin(T_DIR) * (SP_X - SP_W * 2));
+                        
+                        c_2d.stroke();
+                    };
+                    
+                    c_2d.textAlign = "center";
+                    c_2d.textBaseline = "middle";
+                    c_2d.font = "bold 11px 'Roboto Mono'";
+                    
+                    var fill_indx = (colors) => {
+                        if (pos.s == 0n) {
+                            conn(Math.PI * 3 / 2, colors[from_phys_pin(pos, id, 0n)]);
+                            conn(Math.PI * 1 / 6, colors[from_phys_pin(pos, id, 1n)]);
+                            conn(Math.PI * 5 / 6, colors[from_phys_pin(pos, id, 2n)]);
+                        } else {
+                            conn(Math.PI * 1 / 2, colors[from_phys_pin(pos, id, 0n)]);
+                            conn(Math.PI * 7 / 6, colors[from_phys_pin(pos, id, 1n)]);
+                            conn(Math.PI * 11 / 6, colors[from_phys_pin(pos, id, 2n)]);
+                        }
+                    };
+                    
+                    switch (n216(id) / 18n) {
+                        case 0n: // nil
+                            fill_indx([COLORS[COLOR_NIL], COLORS[COLOR_NIL], COLORS[COLOR_NIL]]);
+                            
+                            break;
+                        case 1n: // constant
+                            fill_indx([COLORS[COLOR_OUTPUT], COLORS[COLOR_OUTPUT], COLORS[COLOR_OUTPUT]]);
+                            
+                            print(["0", "1", "-"][id / 6n % 3n]);
+                            
+                            break;
+                        case 2n: // 2-wire
+                            fill_indx([COLORS[COLOR_NIL], COLORS[COLOR_INPUT], COLORS[COLOR_OUTPUT]]);
+                            
+                            if (is_sim)
+                                print_big(sim_grid.get(pos.q).get(pos.r)[pos.s + 2n]);
+                            
+                            break;
+                        case 3n: // splitter
+                            fill_indx([COLORS[COLOR_OUTPUT], COLORS[COLOR_INPUT], COLORS[COLOR_OUTPUT]]);
+                            
+                            if (is_sim)
+                                print_big(sim_grid.get(pos.q).get(pos.r)[pos.s + 2n]);
+                            
+                            break;
+                        case 4n: // t-switch
+                        case 5n: // s-switch
+                        case 6n: // n-switch
+                        case 9n: // cmp
+                        case 10n: // i/o
+                            fill_indx([COLORS[COLOR_INPUT_2], COLORS[COLOR_INPUT], COLORS[COLOR_OUTPUT]]);
+                            
+                            print(["T", "S", "N", null, null, "C", "I"][n216(id) / 18n - 4n]);
+                            
+                            if (is_sim)
+                                print_big(sim_grid.get(pos.q).get(pos.r)[pos.s + 2n]);
+                            
+                            break;
+                        case 7n: // add
+                        case 8n: // mul
+                            fill_indx([COLORS[COLOR_INPUT], COLORS[COLOR_INPUT], COLORS[COLOR_OUTPUT]]);
+                            
+                            print(["+", "×"][n216(id) / 18n - 7n]);
+                            
+                            if (is_sim)
+                                print_big(sim_grid.get(pos.q).get(pos.r)[pos.s + 2n]);
+                            
+                            break;
+                        case 11n: // builder
+                            switch (n216(id) / 6n % 3n) {
+                                case 0n: // i-builder
+                                    fill_indx([COLORS[COLOR_INPUT], COLORS[COLOR_BUILD], COLORS[COLOR_OUTPUT]]);
+                                    
+                                    break;
+                                case 1n: // o-builder
+                                    fill_indx([COLORS[COLOR_OUTPUT], COLORS[COLOR_BUILD], COLORS[COLOR_INPUT]]);
+                                    
+                                    break;
+                                case 2n: // s-builder
+                                    fill_indx([COLORS[COLOR_NIL], COLORS[COLOR_BUILD], COLORS[COLOR_OUTPUT]]);
+                                    
+                                    break;
+                            }
+                            
+                            var or = n216(id) % 6n;
+                            
+                            arm(Number(or / 2n - or % 2n) * Math.PI * 2 / 3 + (pos.s == 0n ? Math.PI * 3 / 2 : Math.PI * 1 / 2) + Math.PI * 1 / 3, Number(or / 2n + 1n) * Math.PI * 2 / 3 + (pos.s == 0n ? Math.PI * 3 / 2 : Math.PI * 1 / 2) + Math.PI * 4 / 3);
+                            arm(Number(or / 2n - or % 2n) * Math.PI * 2 / 3 + (pos.s == 0n ? Math.PI * 3 / 2 : Math.PI * 1 / 2) + Math.PI * 1 / 3, Number(or / 2n + 1n - or % 2n * 2n) * Math.PI * 2 / 3 + (pos.s == 0n ? Math.PI * 3 / 2 : Math.PI * 1 / 2) + Math.PI * 0 / 3);
+                            
+                            if (is_sim)
+                                print_big(sim_grid.get(pos.q).get(pos.r)[pos.s + 2n]);
+                            
+                            break;
+                    }
+                    
+                    if (id < 0n || id >= 216n || id / 18n == 0n && id != 0n || id / 18n != 1 && id / 18n != 11n && id / 6n % 3n != 0n) {
+                        var point = pos_to_point(pos);
+                        
+                        c_2d.fillStyle = "#000000";
+                        
+                        c_2d.beginPath();
+                        c_2d.moveTo(point[0] + Math.cos(pos.s == 0n ? Math.PI * 1 / 2 : Math.PI * 3 / 2) * SP_D * 8, point[1] - Math.sin(pos.s == 0n ? Math.PI * 1 / 2 : Math.PI * 3 / 2) * SP_D * 8);
+                        c_2d.lineTo(point[0] + Math.cos(pos.s == 0n ? Math.PI * 7 / 6 : Math.PI * 1 / 6) * SP_D * 8, point[1] - Math.sin(pos.s == 0n ? Math.PI * 7 / 6 : Math.PI * 1 / 6) * SP_D * 8);
+                        c_2d.lineTo(point[0] + Math.cos(pos.s == 0n ? Math.PI * 11 / 6 : Math.PI * 5 / 6) * SP_D * 8, point[1] - Math.sin(pos.s == 0n ? Math.PI * 11 / 6 : Math.PI * 5 / 6) * SP_D * 8);
+                        c_2d.closePath();
+                        
+                        c_2d.fill();
+                    }
+                };
+                
+                var draw = () => {
+                    // var start = performance.now();
+                    
+                    c_2d.clearRect(0, 0, window.innerWidth, window.innerHeight);
+                    
+                    var from = BigInt(Math.floor((window.innerWidth / width + window.innerHeight / (width * Math.sqrt(3) / 2)) / 2 + 2));
+                    var r_off = BigInt(Math.round(disp_mid[1] / (width * Math.sqrt(3) / 2)));
+                    var q_off = BigInt(Math.round(disp_mid[0] / width)) - r_off / 2n;
+                    
+                    // console.log(from, q_off, r_off);
+                    
+                    /*
+                    
+                    var q, r;
+                    
+                    c_2d.fillStyle = "#000000";
+                    
+                    for (q = q_off - from; q <= q_off + from; q++) {
+                        for (r = r_off - from; r <= r_off + from; r++) {
+                            draw_diagram({ q: q, r: r, s: 0n });
+                            draw_diagram({ q: q, r: r, s: 1n });
+                        }
+                    }
+                    
+                    */
+                    
+                    draw_diagram({ q: 0n, r: 0n, s: 0n });
+                    draw_diagram({ q: 0n, r: 0n, s: 1n });
+                    draw_diagram({ q: 1n, r: 0n, s: 0n });
+                    draw_diagram({ q: 1n, r: 0n, s: 1n });
+                    draw_diagram({ q: 2n, r: 0n, s: 0n });
+                    
+                    const FOC_R = 21;
+                    const FOC_S = FOC_R / Math.sqrt(3);
+                    
+                    var point = pos_to_point(focus);
+                    
+                    if (!right_copy_pos || (!p_focus || (focus.q != p_focus.q || focus.r != p_focus.r || focus.s != p_focus.s)) && (focus.q != right_copy_pos.q || focus.r != right_copy_pos.r || focus.s != right_copy_pos.s)) {
+                        c_2d.strokeStyle = "#000000";
+
+                        c_2d.beginPath();
+                        c_2d.moveTo(point[0] + Math.cos(Math.PI * 1 / 2) * FOC_R + Math.cos(Math.PI) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 2) * FOC_R + Math.sin(Math.PI) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 5 / 6) * FOC_R + Math.cos(Math.PI * 4 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 5 / 6) * FOC_R + Math.sin(Math.PI * 4 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 7 / 6) * FOC_R + Math.cos(Math.PI * 5 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 7 / 6) * FOC_R + Math.sin(Math.PI * 5 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 3 / 2) * FOC_R + Math.cos(0) * FOC_S, point[1] + Math.sin(Math.PI * 3 / 2) * FOC_R + Math.sin(0) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 11 / 6) * FOC_R + Math.cos(Math.PI * 1 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 11 / 6) * FOC_R + Math.sin(Math.PI * 1 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 1 / 6) * FOC_R + Math.cos(Math.PI * 2 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 6) * FOC_R + Math.sin(Math.PI * 2 / 3) * FOC_S);
+                        c_2d.closePath();
+
+                        c_2d.stroke();
+                    }
+                    
+                    if (p_focus && (right_copy_pos || p_focus.q != focus.q || p_focus.r != focus.r || p_focus.s != focus.s) && (!right_copy_pos || p_focus.q != right_copy_pos.q || p_focus.r != right_copy_pos.r || p_focus.s != right_copy_pos.s)) {
+                        point = pos_to_point(p_focus);
+                        
+                        c_2d.strokeStyle = right_copy_pos ? "#00aaaa" : "#888888";
+
+                        c_2d.beginPath();
+                        c_2d.moveTo(point[0] + Math.cos(Math.PI * 1 / 2) * FOC_R + Math.cos(Math.PI) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 2) * FOC_R + Math.sin(Math.PI) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 5 / 6) * FOC_R + Math.cos(Math.PI * 4 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 5 / 6) * FOC_R + Math.sin(Math.PI * 4 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 7 / 6) * FOC_R + Math.cos(Math.PI * 5 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 7 / 6) * FOC_R + Math.sin(Math.PI * 5 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 3 / 2) * FOC_R + Math.cos(0) * FOC_S, point[1] + Math.sin(Math.PI * 3 / 2) * FOC_R + Math.sin(0) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 11 / 6) * FOC_R + Math.cos(Math.PI * 1 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 11 / 6) * FOC_R + Math.sin(Math.PI * 1 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 1 / 6) * FOC_R + Math.cos(Math.PI * 2 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 6) * FOC_R + Math.sin(Math.PI * 2 / 3) * FOC_S);
+                        c_2d.closePath();
+
+                        c_2d.stroke();
+                    }
+                    
+                    if (right_copy_pos) {
+                        point = pos_to_point(right_copy_pos);
+                        
+                        c_2d.strokeStyle = "#888888";
+
+                        c_2d.beginPath();
+                        c_2d.moveTo(point[0] + Math.cos(Math.PI * 1 / 2) * FOC_R + Math.cos(Math.PI) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 2) * FOC_R + Math.sin(Math.PI) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 5 / 6) * FOC_R + Math.cos(Math.PI * 4 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 5 / 6) * FOC_R + Math.sin(Math.PI * 4 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 7 / 6) * FOC_R + Math.cos(Math.PI * 5 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 7 / 6) * FOC_R + Math.sin(Math.PI * 5 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 3 / 2) * FOC_R + Math.cos(0) * FOC_S, point[1] + Math.sin(Math.PI * 3 / 2) * FOC_R + Math.sin(0) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 11 / 6) * FOC_R + Math.cos(Math.PI * 1 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 11 / 6) * FOC_R + Math.sin(Math.PI * 1 / 3) * FOC_S);
+                        c_2d.lineTo(point[0] + Math.cos(Math.PI * 1 / 6) * FOC_R + Math.cos(Math.PI * 2 / 3) * FOC_S, point[1] + Math.sin(Math.PI * 1 / 6) * FOC_R + Math.sin(Math.PI * 2 / 3) * FOC_S);
+                        c_2d.closePath();
+
+                        c_2d.stroke();
+                    }
+                    
+                    if (is_pick)
+                        draw_pick(Number(n216(pos_to_id(pick_pos)) / 18n), pos_to_id(pick_pos), pick_pos);
+                    
+                    /*c_2d.fillStyle = "#aaaaaa";
+                    
+                    c_2d.fillRect(window.innerWidth / 2 - 10, window.innerHeight / 2 - 1, 20, 2);
+                    c_2d.fillRect(window.innerWidth / 2 - 1, window.innerHeight / 2 - 10, 2, 20);*/
+                    
+                    // console.log(performance.now() - start);
+                };
+                
+                var proc_input = (string) => {
+                    if (string == "")
+                        return [];
+
+                    if (string.match(/^-?\d+$/))
+                        return [options.inf_ins ? BigInt(string) : n216(BigInt(string))];
+
+                    if (string.match(/^\[\s*(((-?\d+|'.)\s*,\s*)*(-?\d+|'.))?\s*\]$/)) {
+                        var data = [];
+
+                        string = string.slice(1, -1).trimStart();
+
+                        while (string) {
+                            if (string[0] == "'") {
+                                data.push(options.inf_ins ? BigInt([...string][1].codePointAt()) : BigInt([...string][1].codePointAt()) % 216n);
+
+                                string = string.slice(string.slice(2).includes(",") ? string.slice(2).indexOf(",") + 3 : Infinity);
+                            } else {
+                                data.push(options.inf_ins ? BigInt(string.match(/^-?\d+/)[0]) : n216(BigInt(string.match(/^-?\d+/)[0])));
+
+                                string = string.slice(string.includes(",") ? string.indexOf(",") + 1 : Infinity);
+                            }
+
+                            string = string.trimStart();
+                        }
+
+                        return data;
+                    }
+
+                    try {
+                        var data = JSON.parse(string);
+
+                        if (typeof data == "string")
+                            return [...data].map(c => options.inf_ins ? BigInt(c.codePointAt()) : BigInt(c.codePointAt()) % 216n);
+                    } catch (info) {
+                        throw new SyntaxError("Input is wrong :(");
+                    }
+                };
+                
+                var quick_sim_tick;
+                
+                var start_sim = () => {
+                    try {
+                        input = proc_input(io_input.value);
+                    } catch (info) {
+                        io_input.classList.add("wrong");
+                        
+                        return;
+                    }
+                    
+                    is_sim = !0;
+                    
+                    sim_grid = new Map([...grid].map(r => [r[0], new Map([...r[1]].map(g => [g[0], [...g[1], null, null]]))]));
+                    
+                    draw();
+                    
+                    stringify = io_stringify.checked;
+                    output = [];
+                    
+                    io_input.disabled = true;
+                    io_stringify.disabled = true;
+                    io_output.value = "";
+                    
+                    ctrl.style.height = "164px";
+                    ctrl_start_cont.style.display = "none";
+                    ctrl_stop_cont.style.display = "block";
+                    
+                    if (is_quick)
+                        ci = window.setTimeout(() => {
+                            ci = window.setInterval(quick_sim_tick, 1000 / tps);
+                        }, 1000 / 8);
+                };
+                
+                var stop_sim = () => {
+                    is_sim = !1;
+                    
+                    if (is_quick)
+                        window.clearInterval(ci);
+                    
+                    io_input.disabled = false;
+                    io_stringify.disabled = false;
+                    
+                    ctrl.style.height = "";
+                    ctrl_start_cont.style.display = "";
+                    ctrl_stop_cont.style.display = "";
+                };
+                
+                var tick_pos = (pos, id, ops) => {
+                    var find_sim_g = (n) => {
+                        var p_pos = find_pin_pos(pos, id, n);
+                        
+                        var sim_g = sim_grid.has(p_pos.q) && sim_grid.get(p_pos.q).has(p_pos.r) ? sim_grid.get(p_pos.q).get(p_pos.r) : [0n, 0n, null, null];
+                        
+                        return p_pos.s == 0n ? [sim_g[0], sim_g[2]] : [sim_g[1], sim_g[3]];
+                    };
+                    
+                    var pin = (n) => {
+                        var p_pos = find_pin_pos(pos, id, n);
+                        
+                        var sim_g = sim_grid.has(p_pos.q) && sim_grid.get(p_pos.q).has(p_pos.r) ? sim_grid.get(p_pos.q).get(p_pos.r) : [0n, 0n, null, null];
+                        
+                        const outputs = [[0n, 1n, 2n], [0n, 1n, 2n], [2n], [0n, 2n], [2n], [2n], [2n], [2n], [2n], [2n], [2n], [[2n, 0n, 2n][n216(sim_g[p_pos.s]) / 6n % 3n]]];
+                        
+                        if (!outputs[n216(sim_g[p_pos.s]) / 18n].includes(from_phys_pin(p_pos, sim_g[p_pos.s], to_phys_pin(pos, id, n))))
+                            return null;
+                        
+                        if (n216(sim_g[p_pos.s]) / 18n % 12n == 1n)
+                            return [0n, 1n, options.inf_ins ? -1n : 215n][n216(sim_g[p_pos.s]) / 6n % 3n];
+                        
+                        return sim_g[p_pos.s + 2n];
+                    };
+                    
+                    switch (n216(id) / 18n) {
+                        case 0n:
+                            return null;
+                        case 1n:
+                            return null;
+                        case 2n:
+                            return pin(1n);
+                        case 3n:
+                            return pin(1n);
+                        case 4n:
+                            return pin(0n) == null ? null : pin(1n);
+                        case 5n:
+                            return pin(1n) == null ? pin(0n) : pin(1n);
+                        case 6n:
+                            return pin(0n) == pin(1n) ? null : pin(1n);
+                        case 7n:
+                            return pin(0n) == null ? null : pin(1n) == null ? null : options.inf_ins ? pin(0n) + pin(1n) : (pin(0n) + pin(1n)) % 216n;
+                        case 8n:
+                            return pin(0n) == null ? null : pin(1n) == null ? null : options.inf_ins ? pin(0n) * pin(1n) : (pin(0n) * pin(1n)) % 216n;
+                        case 9n:
+                            return pin(0n) == null ? null : pin(1n) == null ? null : pin(0n) == pin(1n) ? 0n : pin(1n) < pin(0n) ? (options.inf_ins ? -1n : 215n) : 1n;
+                        case 10n:
+                            if (pin(1n) != null)
+                                ops.push({ op: "o", pos: pos, ins: pin(1n), phys_pin: -1 });
+                            
+                            if (pin(0n) != null)
+                                ops.push({ op: "i", pos: pos, ins: pin(0n), phys_pin: -1 });
+                            
+                            return null;
+                        case 11n:
+                            if (pin(1n) != null)
+                                ops.push({ op: "b", pos: pos, b_pos: find_pin_pos(pos, id, 0n), ins: pin(1n), phys_pin: to_phys_pin(pos, id, 0n) });
+                            
+                            if (id / 6n % 3n == 0n) {
+                                return pin(0n);
+                            } else if (id / 6n % 3n == 1n) {
+                                return pin(2n);
+                            } else {
+                                return find_sim_g(0n)[0];
+                            }
+                    }
+                };
+                
+                var pos_sip = (pos) => {
+                    var x = (pos.q + pos.q / (2n ** 64n)) % (2n ** 64n);
+                    var y = (pos.r + pos.r / (2n ** 64n) + pos.s) % (2n ** 64n);
+
+                    var xorshift128p = (s) => {
+                        var s0 = s[0];
+                        var s1 = s[1];
+
+                        s[0] = s1;
+
+                        s0 ^= s0 << 23n;
+                        s0 ^= s0 >> 17n;
+                        s0 ^= s1 ^ (s1 >> 5n);
+
+                        s0 %= 2n ** 64n;
+
+                        s[1] = s0;
+
+                        return (s0 + s1) % (2n ** 64n);
+                    };
+                    
+                    var s = [x, y];
+
+                    for (var i = 0; i < 128 + Number(pos.s) * 24; i++)
+                        xorshift128p(s);
+
+                    return Number(xorshift128p(s)) / (2 ** 64);
+                };
+                
+                var sim_tick = () => {
+                    var ops = [];
+                    
+                    var sim_grid_2 = new Map();
+                    
+                    var gs, gsn, g;
+                    
+                    for (gs of sim_grid) {
+                        sim_grid_2.set(gs[0], gsn = new Map());
+                        
+                        for (g of gs[1])
+                            gsn.set(g[0], [g[1][0], g[1][1], tick_pos({ q: gs[0], r: g[0], s: 0n }, g[1][0], ops), tick_pos({ q: gs[0], r: g[0], s: 1n }, g[1][1], ops)]);
+                    }
+                    
+                    switch (options.op_priority) {
+                        case "quick":
+                            break;
+                        case "random":
+                            for (var k, i = ops.length - 1; i >= 0; i--) {
+                                k = Math.random() * (i + 1) | 0;
+                                
+                                [ops[i], ops[k]] = [ops[k], ops[i]];
+                            }
+                            
+                            break;
+                        case "positional":
+                            ops = ops.sort((x, y) => pos_sip(x.pos) - pos_sip(y.pos));
+                            
+                            break;
+                        case "dir_priority":
+                            ops = ops.sort((x, y) => Number(x.phys_pin - y.phys_pin || x.pos.q - y.pos.q || x.pos.r - y.pos.r || x.pos.s - y.pos.s));
+                    }
+                    
+                    // console.log(ops);
+                    
+                    var stop_finish = !1;
+                    
+                    for (var op of ops) {
+                        switch (op.op) {
+                            case "b":
+                                var s_grid = pos_to_s_grid(op.b_pos, sim_grid_2);
+
+                                s_grid[op.b_pos.s] = op.ins;
+                                s_grid[op.b_pos.s + 2n] = null;
+                                
+                                break;
+                            case "i":
+                                if (input.length != 0) {
+                                    sim_grid_2.get(op.pos.q).get(op.pos.r)[op.pos.s + 2n] = input.shift();
+                                    
+                                    stop_finish = !0;
+                                }
+                                
+                                break;
+                            case "o":
+                                output.push(op.ins);
+                                
+                                var p_scroll = (io_output.scrollHeight - io_output.offsetHeight - 2) - io_output.scrollTop;
+                                
+                                if (stringify) {
+                                    try {
+                                        io_output.value += String.fromCodePoint(Number(op.ins));
+                                    } catch (info) {
+                                        io_output.value += "\ufffd";
+                                    }
+                                } else {
+                                    io_output.value += (io_output.value ? "\n" : "") + op.ins;
+                                }
+                                
+                                if (p_scroll < 12.5)
+                                    io_output.scrollTo(0, io_output.scrollHeight);
+                                
+                                stop_finish = !0;
+                                
+                                break;
+                        }
+                    }
+                    
+                    var find = (s_grid, q, r, s) => s_grid.has(q) && s_grid.get(q).has(r) ? s_grid.get(q).get(r)[s] : s < 2n ? 0n : null;
+                    
+                    if (options.stop_on_finish && !stop_finish) {
+                        var stop = !0;
+                        
+                        var q, r, d;
+                        
+                        for (q of sim_grid) {
+                            for (r of q[1]) {
+                                d = (
+                                    r[1][0n] != find(sim_grid_2, q[0], r[0], 0n) ||
+                                    r[1][1n] != find(sim_grid_2, q[0], r[0], 1n) ||
+                                    r[1][2n] != find(sim_grid_2, q[0], r[0], 2n) ||
+                                    r[1][3n] != find(sim_grid_2, q[0], r[0], 3n)
+                                );
+                                
+                                if (d) {
+                                    stop = !1;
+                                    
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        for (q of sim_grid_2) {
+                            for (r of q[1]) {
+                                d = (
+                                    r[1][0n] != find(sim_grid, q[0], r[0], 0n) ||
+                                    r[1][1n] != find(sim_grid, q[0], r[0], 1n) ||
+                                    r[1][2n] != find(sim_grid, q[0], r[0], 2n) ||
+                                    r[1][3n] != find(sim_grid, q[0], r[0], 3n)
+                                );
+                                
+                                if (d) {
+                                    stop = !1;
+                                    
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (stop)
+                            stop_sim();
+                    }
+
+                    sim_grid = sim_grid_2;
+                    
+                    /* if (options.stop_on_nil) {
+                        var stop = !0;
+
+                        for (gs of sim_grid_2) {
+                            for (g of gs[1]) {
+                                if (g[1][2] != null || g[1][3] != null) {
+                                    stop = !1;
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (stop)
+                            stop_sim();
+                    } */
+                };
+                
+                quick_sim_tick = () => {
+                    sim_tick();
+                    
+                    draw();
+                };
+                
+                (window.onresize = () => {
+                    display.width = window.innerWidth;
+                    display.height = window.innerHeight;
+                    
+                    draw();
+                })();
+                
+                var grid_comp = (grid) => {
+                    var filt = [...grid.entries()].filter(x => [...x[1].values()].some(y => y[0] || y[1])).sort((x, y) => Number(x[0] - y[0]));
+                    
+                    var comp;
+                    
+                    if (filt.length == 0) {
+                        comp = [];
+                    } else {
+                        var min_q = filt[0][0];
+                        var max_q = filt.slice(-1)[0][0];
+
+                        var bb = (n) => {
+                            var str = [];
+
+                            while (n) {
+                                if (n % 15n) {
+                                    str.unshift(n % 15n);
+                                    n /= 15n;
+                                } else {
+                                    str.unshift(15n);
+                                    n = n / 15n - 1n;
+                                }
+                            }
+
+                            return str;
+                        };
+
+                        var bbo = (n) => {
+                            if (n < 0n) {
+                                n = -n - 1n;
+
+                                return bb((n % 216n) + 216n * 2n * (n / 216n) + 216n);
+                            } else {
+                                return bb((n % 216n) + 216n * 2n * (n / 216n));
+                            }
+                        };
+
+                        var comp = bb(min_q < 0n ? -(min_q * 2n - 1n) : min_q * 2n).concat([0n]);
+
+                        var q, r, fr;
+
+                        for (q = min_q; q <= max_q; q++) {
+                            if (q != min_q)
+                                comp.push(0n);
+
+                            if (grid.has(q))
+                                for (r of grid.get(q))
+                                    comp.push(...bb(r[0] < 0n ? (r[0] - 1n) * -2n : r[0] * 2n + 1n), 0n, ...bbo(r[1][0]), 0n, ...bbo(r[1][1]), 0n);
+                        }
+
+                        while (comp[comp.length - 1] == 0n)
+                            comp.pop();
+                    }
+
+                    // console.log(comp);
+
+                    var n = 0n;
+
+                    for (var x of comp)
+                        n = n * 16n + (x || 16n);
+
+                    return n;
+                };
+
+                var grid_dcomp = (n) => {
+                    var comp = [];
+
+                    while (n) {
+                        if (n % 16n) {
+                            comp.unshift(n % 16n);
+                            n /= 16n;
+                        } else {
+                            comp.unshift(0n);
+                            n = n / 16n - 1n;
+                        }
+                    }
+
+                    // console.log(comp);
+
+                    var bb2 = (str) => {
+                        var n = 0n;
+
+                        for (var s of str)
+                            n = n * 15n + s;
+
+                        return n;
+                    };
+
+                    var bb2s = (str, off = 0n) => {
+                        var n = bb2(str) - off;
+
+                        return n % 2n ? -(n - 1n) / 2n : n / 2n;
+                    };
+
+                    var bb2o = (str) => {
+                        var n = bb2(str);
+
+                        return n / 216n % 2n ? -(n % 216n) - 216n * (n / 216n / 2n) - 1n : (n % 216n) + 216n * (n / 216n / 2n);
+                    };
+
+                    var min_q = bb2s(comp.slice(0, comp.indexOf(0n)));
+
+                    var grid = new Map();
+
+                    var q = min_q;
+
+                    grid.set(q, new Map());
+
+                    comp = comp.slice(comp.indexOf(0n) + 1);
+
+                    var slic_to_0 = (comp) => {
+                        var indx = comp.indexOf(0n);
+
+                        if (indx == -1n)
+                            return comp.splice(0, comp.length);
+
+                        var slic = comp.slice(0, indx);
+
+                        comp.splice(0, indx + 1);
+
+                        return slic;
+                    };
+
+                    var r, s0, s1;
+
+                    while (comp.length) {
+                        if (comp.indexOf(0n) == 0n) {
+                            q++;
+
+                            grid.set(q, new Map());
+
+                            if (grid.get(q - 1n).size == 0n)
+                                grid.delete(q - 1n);
+
+                            comp = comp.slice(1);
+                        } else {
+                            r = slic_to_0(comp);
+                            s0 = slic_to_0(comp);
+                            s1 = slic_to_0(comp);
+
+                            grid.get(q).set(bb2s(r, 1n), [bb2o(s0), bb2o(s1)]);
+                        }
+                    }
+
+                    return grid;
+                };
+
+                var push_param = () => {
+                    var option_n = BigInt(
+                        (io_stringify.checked ? 1 : 0) * 224 +
+                        ["quick", "random", "positional", "dir_priority"].indexOf(options.op_priority) * 56 +
+                        (options.inf_ins ? 1 : 0) * 28 +
+                        (options.stop_on_finish ? 1 : 0) * 14 +
+                        (is_quick ? 1 : 0) * 7 +
+                        Math.log2(tps) + 2
+                    );
+
+                    var input_string = JSON.stringify(io_input.value).slice(1, -1);
+
+                    if ([...input_string].some(c => c.codePointAt() < 32 || c.codePointAt() >= 127))
+                        throw new SyntaxError("Non-pASCII");
+
+                    var n = grid_comp(grid) * 96n + 95n;
+
+                    var vc;
+
+                    for (var c of input_string)
+                        n = n * 96n + (BigInt(c.codePointAt()) - 32n);
+
+                    n = n * 448n + option_n;
+
+                    // console.log(n);
+
+                    var uri_c = "";
+
+                    while (n) {
+                        uri_c += ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")[n % 66n];
+                        n /= 66n;
+                    }
+
+                    window.history.replaceState(void(0), void(0), window.location.pathname + window.location.search + "#" + uri_c);
+                };
+
+                var params = () => {
+                    var uri_c = [...(window.location.hash.slice(1) || "wzJ")];
+
+                    var n = 0n;
+
+                    while (uri_c.length)
+                        n = n * 66n + BigInt("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~".indexOf(uri_c.pop()));
+
+                    // console.log(n);
+
+                    var option_n = n % 448n;
+
+                    n /= 448n;
+
+                    var input_string = "";
+
+                    while (1) {
+                        input_string = String.fromCodePoint(Number(n % 96n + 32n)) + input_string;
+                        n /= 96n;
+
+                        if (input_string[0] == "\x7f") {
+                            input_string = input_string.slice(1);
+
+                            break;
+                        }
+                    }
+
+                    var grid = grid_dcomp(n);
+
+                    return {
+                        input: input_string,
+                        stringify: option_n / 224n,
+                        op_priority: option_n / 56n % 4n,
+                        inf_ins: option_n / 28n % 2n,
+                        stop_on_finish: option_n / 14n % 2n,
+                        is_quick: option_n / 7n % 2n,
+                        tps: 2 ** Number(option_n % 7n - 2n),
+                        grid: grid
+                    };
+                };
+                
+                var pop_params = () => {
+                    var data = params();
+
+                    // console.log(data);
+
+                    io_input.value = JSON.parse("\"" + data.input + "\"");
+                    io_stringify.checked = !!data.stringify;
+                    options.op_priority = ["quick", "random", "positional", "dir_priority"][data.op_priority];
+                    options.inf_ins = !!data.inf_ins;
+                    options.stop_on_finish = !!data.stop_on_finish;
+                    is_quick = !!data.is_quick;
+                    tps = data.tps;
+                    grid = data.grid;
+
+                    ctrl_quick.textContent = is_quick ? "Stop" : "Start";
+                    ctrl_op_priority.querySelector(".option").textContent = ({
+                        "quick": "Quick",
+                        "random": "Random",
+                        "positional": "Positional",
+                        "dir_priority": "Dir. priority"
+                    })[options.op_priority];
+                    ctrl_inf_ins.querySelector(".option").textContent = options.inf_ins ? "Off" : "On";
+                    ctrl_stop_on_finish.querySelector(".option").textContent = options.stop_on_finish ? "On" : "Off";
+                    ctrl_tps.querySelector(".option").textContent = ["¼ ticks/s", "½ ticks/s", "1 ticks/s", "2 ticks/s", "4 ticks/s", "8 ticks/s", "16 ticks/s"][Math.log2(tps) + 2];
+
+                    draw();
+                };
+                
+                pop_params();
+                
+                var pos_to_p_cs = (pos) => {
+                    var p0 = find_phys_pin_pos(pos, 0n);
+                    var p1 = find_phys_pin_pos(pos, 1n);
+                    var p2 = find_phys_pin_pos(pos, 2n);
+                    
+                    var p0_id = n216(pos_to_id(p0));
+                    var p1_id = n216(pos_to_id(p1));
+                    var p2_id = n216(pos_to_id(p2));
+                    
+                    const cs = [
+                        "nnn",
+                        "ooo",
+                        "nio",
+                        "oio",
+                        "sio",
+                        "sio",
+                        "sio",
+                        "iio",
+                        "iio",
+                        "sio",
+                        "sio",
+                        "ios",
+                        "ois",
+                        "nos"
+                    ];
+                    
+                    return [
+                        cs[p0_id / 18n == 11n ? p0_id / 6n % 3n + 11n : p0_id / 18n][from_phys_pin(p0, p0_id, 0n)],
+                        cs[p1_id / 18n == 11n ? p1_id / 6n % 3n + 11n : p1_id / 18n][from_phys_pin(p1, p1_id, 1n)],
+                        cs[p2_id / 18n == 11n ? p2_id / 6n % 3n + 11n : p2_id / 18n][from_phys_pin(p2, p2_id, 2n)]
+                    ];
+                };
+                
+                var auto_routing = (pos, shift = !1) => {
+                    // console.log(pos);
+                    
+                    var p_cs = pos_to_p_cs(pos);
+                    var p_cs_s = [...p_cs].sort().join("");
+                    
+                    var flip = (n) => n == 0n ? n : 3n - n;
+                    
+                    // console.log(p_cs);
+                    
+                    var nn_c;
+
+                    s_grid = pos_to_s_grid(pos);
+
+                    if (p_cs_s.match(/iio|ios|oss/)) {
+                        s_grid[pos.s] = 54n + BigInt((p_cs.indexOf("o") + 2) % 3) * 2n;
+                        
+                        nn_c = Math.random() < 1 / 3 ? "o" : "i";
+                    } else if (p_cs_s.match(/ioo|oos/)) {
+                        s_grid[pos.s] = 90n + [(n) => (n + 2n) % 6n ^ 1n, (n) => n][(s_grid[pos.s] % 2n + (shift ? 1n : 0n)) % 2n]((p_cs[0] == "o" ? p_cs[1] == "o" ? 0n : 2n : 1n) * 2n);
+                        
+                        nn_c = Math.random() < 1 / 3 ? "i" : "o";
+                    } else if (p_cs_s.match(/ino|nos/)) {
+                        s_grid[pos.s] = 36n + BigInt(p_cs.indexOf("n")) * 2n + (p_cs[(p_cs.indexOf("n") + 1) % 3] == "o" ? 0n : 1n);
+                        
+                        nn_c = Math.random() < 1 / 2 ? "i" : "o";
+                    } else if (p_cs_s.match(/inn|nns/)) {
+                        s_grid[pos.s] = 36n + [(n) => (n + 2n) % 6n ^ 1n, (n) => n][(s_grid[pos.s] % 2n + (shift ? 1n : 0n)) % 2n]((p_cs[0] == "n" ? p_cs[1] == "n" ? 0n : 2n : 1n) * 2n);
+                        
+                        nn_c = "i";
+                    } else if (p_cs_s == "nno") {
+                        s_grid[pos.s] = 36n + [(n) => (n + 4n) % 6n ^ 1n, (n) => n][(s_grid[pos.s] % 2n + (shift ? 1n : 0n)) % 2n]((BigInt(p_cs.indexOf("o")) + 2n) % 3n * 2n);
+                        
+                        nn_c = "o";
+                    } else if (p_cs_s.match(/iin|ins|nss/)) {
+                        s_grid[pos.s] = 54n + BigInt((p_cs.indexOf("n") + 2) % 3) * 2n;
+                        
+                        nn_c = "i";
+                    } else if (p_cs_s == "noo") {
+                        s_grid[pos.s] = 90n + [(n) => (n + 2n) % 6n ^ 1n, (n) => n][(s_grid[pos.s] % 2n + (shift ? 1n : 0n)) % 2n](BigInt((p_cs.indexOf("n") + 1) % 3) * 2n);
+                        
+                        nn_c = "o";
+                    } else {
+                        s_grid[pos.s] = 36n + BigInt(Math.random() * 6 | 0);
+                        
+                        nn_c = Math.random() < 1 / 2 ? "i" : "o";
+                    }
+
+                    if (!is_sim)
+                        push_param();
+                    
+                    return nn_c;
+                };
+                
+                var drop_pick = () => {
+                    pick_ops.style.display = "";
+                    pick_info.style.display = "";
+                    
+                    is_pick = 0;
+                };
+                
+                var cons = document.getElementById("cons");
+                
+                window.onkeydown = (info) => {
+                    if (info.ctrlKey && !info.altKey && !info.metaKey && !info.shiftKey && info.code == "KeyB") {
+                        window.confirm("This will discard your current program. Continue?");
+                        
+                        window.location.href = window.location.pathname + window.location.search;
+                        
+                        return;
+                    }
+                    
+                    if (info.ctrlKey && !info.altKey && !info.metaKey && info.code == "KeyS") {
+                        var comp = grid_comp(grid);
+                        var bin = [];
+                        
+                        while (comp) {
+                            if (comp % 256n) {
+                                bin.unshift(comp % 256n);
+                                comp /= 256n;
+                            } else {
+                                bin.unshift(0n);
+                                comp = comp / 256n - 1n;
+                            }
+                        }
+                        
+                        if (info.shiftKey) {
+                            var xxd = "";
+                            
+                            var i, k, w;
+                            
+                            for (i = 0; i < bin.length; i += 16) {
+                                xxd += i.toString(16).padStart(8, "0") + ": ";
+                                
+                                w = 0;
+                                
+                                for (k = 0; k < bin.length - i && k < 16; k++) {
+                                    xxd += bin[i + k].toString(16).padStart(2, "0") + (k % 2 && k != 15 ? " " : "");
+                                    w += 2 + (k % 2 && k != 15 ? 1 : 0);
+                                }
+                                
+                                xxd += " ".repeat(39 - w) + "\n";
+                            }
+                            
+                            console.log("xxd:\n\n" + xxd + "\nbyte count: " + bin.length);
+                        } else {
+                            var url = window.URL.createObjectURL(new Blob([new Uint8Array(bin.map(Number)).buffer], { type: "application/octet-stream" }));
+                            var a = document.createElement('a');
+                            
+                            a.style.display = "none";
+                            a.href = url;
+                            a.download = "grid-comp.tria";
+                            
+                            document.body.appendChild(a);
+                            
+                            a.click();
+                            
+                            window.URL.revokeObjectURL(url);
+                        }
+                        
+                        info.preventDefault();
+                        
+                        return;
+                    }
+                    
+                    if (info.ctrlKey || info.altKey || info.metaKey)
+                        return;
+                    
+                    if (io.contains(document.activeElement) || document.activeElement == cons)
+                        return;
+                    
+                    var s_grid;
+                    
+                    var window_focus = !0;
+                    
+                    switch (info.code) {
+                        case "ArrowLeft":
+                        case "KeyA":
+                        case "KeyH":
+                            if (mc && !is_sim) {
+                                var s_grid = pos_to_s_grid(focus);
+
+                                if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
+                                    s_grid[focus.s] = 0n;
+                                
+                                push_param();
+                            }
+                            
+                            focus.s = 1n - focus.s;
+                            
+                            if (focus.s == 1n)
+                                focus.q--;
+                            
+                            mc = !1;
+                            
+                            if (is_pick)
+                                drop_pick();
+                            
+                            break;
+                        case "ArrowRight":
+                        case "KeyD":
+                        case "KeyL":
+                            if (mc && !is_sim) {
+                                var s_grid = pos_to_s_grid(focus);
+
+                                if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
+                                    s_grid[focus.s] = 0n;
+                                
+                                push_param();
+                            }
+                            
+                            focus.s = 1n - focus.s;
+                            
+                            if (focus.s == 0n)
+                                focus.q++;
+                            
+                            mc = !1;
+                            
+                            if (is_pick)
+                                drop_pick();
+                            
+                            break;
+                        case "ArrowUp":
+                        case "KeyW":
+                        case "KeyK":
+                            if (mc && !is_sim) {
+                                var s_grid = pos_to_s_grid(focus);
+
+                                if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
+                                    s_grid[focus.s] = 0n;
+                                
+                                push_param();
+                            }
+                            
+                            focus.r++;
+                            focus.s = 1n - focus.s;
+                            
+                            if (focus.s == 1n)
+                                focus.q--;
+                            
+                            mc = !1;
+                            
+                            if (is_pick)
+                                drop_pick();
+                            
+                            break;
+                        case "ArrowDown":
+                        case "KeyS":
+                        case "KeyJ":
+                            if (mc && !is_sim) {
+                                var s_grid = pos_to_s_grid(focus);
+
+                                if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
+                                    s_grid[focus.s] = 0n;
+                                
+                                push_param();
+                            }
+                            
+                            focus.r--;
+                            focus.s = 1n - focus.s;
+                            
+                            if (focus.s == 0n)
+                                focus.q++;
+                            
+                            mc = !1;
+                            
+                            if (is_pick)
+                                drop_pick();
+                            
+                            break;
+                        case "Period":
+                        case "KeyE":
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            if ((n216(s_grid[focus.s]) / 18n == 1n || n216(s_grid[focus.s]) / 18n == 11n) && n216(s_grid[focus.s]) / 6n % 3n != 2n) {
+                                s_grid[focus.s] = n216(s_grid[focus.s]) / 18n * 18n + (n216(s_grid[focus.s]) / 6n + 1n) % 3n * 6n + n216(s_grid[focus.s]) % 6n;
+                            } else {
+                                s_grid[focus.s] = (n216(s_grid[focus.s]) / 18n + 1n) % 12n * 18n + n216(s_grid[focus.s]) % 6n;
+                            }
+                            
+                            if (!is_sim)
+                                mc = !0;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Comma":
+                        case "KeyQ":
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            if ((n216(s_grid[focus.s]) / 18n == 1n || n216(s_grid[focus.s]) / 18n == 11n) && n216(s_grid[focus.s]) / 6n % 3n != 0n) {
+                                s_grid[focus.s] = n216(s_grid[focus.s]) / 18n * 18n + (n216(s_grid[focus.s]) / 6n - 1n) % 3n * 6n + n216(s_grid[focus.s]) % 6n;
+                            } else {
+                                s_grid[focus.s] = (n216(s_grid[focus.s]) / 18n + 11n) % 12n * 18n + (n216(s_grid[focus.s]) / 18n == 2n || n216(s_grid[focus.s]) / 18n == 0n ? 2n : 0n) * 6n + n216(s_grid[focus.s]) % 6n;
+                            }
+                            
+                            if (!is_sim)
+                                mc = !0;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "BracketLeft":
+                        case "KeyZ":
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = n216(s_grid[focus.s]) / 6n * 6n + (n216(s_grid[focus.s]) % 6n + (!!focus.s != info.shiftKey ? 2n : 4n)) % 6n;
+                            
+                            if (!is_sim)
+                                mc = !0;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "BracketRight":
+                        case "KeyX":
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = n216(s_grid[focus.s]) / 6n * 6n + (n216(s_grid[focus.s]) % 6n + (!!focus.s != info.shiftKey ? 4n : 2n)) % 6n;
+                            
+                            if (!is_sim)
+                                mc = !0;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Backslash":
+                        case "KeyC":
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = n216(s_grid[focus.s]) / 6n * 6n + (n216(s_grid[focus.s]) % 6n ^ 1n);
+                            
+                            if (!is_sim)
+                                mc = !0;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "KeyR":
+                            if (is_sim) {
+                                if (info.shiftKey) {
+                                    var gs, g;
+
+                                    for (gs of sim_grid) {
+                                        for (g of gs[1]) {
+                                            if (!grid.has(gs[0]))
+                                                grid.set(gs[0], new Map());
+
+                                            if (grid.get(gs[0]).has(g[0])) {
+                                                grid.get(gs[0]).set(g[0], [g[1][0], g[1][1]]);
+                                            } else {
+                                                grid.get(gs[0]).set(g[0], [g[1][0], g[1][1]]);
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                stop_sim();
+                            } else {
+                                start_sim();
+                            }
+                            
+                            break;
+                        case "KeyT":
+                            if (is_sim) {
+                                if (is_quick) {
+                                    window.clearInterval(ci);
+
+                                    ctrl_quick.textContent = "Start";
+                                } else {
+                                    ci = window.setInterval(quick_sim_tick, 1000 / tps);
+
+                                    ctrl_quick.textContent = "Stop";
+                                }
+
+                                is_quick = !is_quick;
+                            }
+                            
+                            push_param();
+                            
+                            break;
+                        case "KeyY":
+                            if (is_sim)
+                                sim_tick();
+                            
+                            break;
+                        case "KeyU":
+                            if (is_sim) {
+                                var indx = Math.log2(tps) + 2;
+                    
+                                tps = [1 / 4, 1 / 2, 1, 2, 4, 8, 16][info.shiftKey ? (indx + 6) % 7 : (indx + 1) % 7];
+
+                                if (is_quick) {
+                                    window.clearInterval(ci);
+
+                                    ci = window.setInterval(quick_sim_tick, 1000 / tps);
+                                }
+
+                                ctrl_tps.querySelector(".option").textContent = ["¼ ticks/s", "½ ticks/s", "1 ticks/s", "2 ticks/s", "4 ticks/s", "8 ticks/s", "16 ticks/s"][Math.log2(tps) + 2];
+
+                                push_param();
+                            }
+                        case "Digit1": // route
+                            auto_routing(focus, info.shiftKey);
+                            
+                            break;
+                        case "Digit2": // 2-wire
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 36n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit3": // splitter
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 54n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit4": // t-switch
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 72n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit5": // s-switch
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 90n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit6": // n-switch
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 108n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit7": // add
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 126n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit8": // mul
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 144n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit9": // cmp
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 162n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Digit0": // i/o
+                            s_grid = pos_to_s_grid(focus);
+                            
+                            s_grid[focus.s] = 180n + (s_grid[focus.s] % 6n + 6n) % 6n;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            break;
+                        case "Escape":
+                            if (is_pick)
+                                drop_pick();
+                            
+                            break;
+                        case "Backquote":
+                            if (info.shiftKey) {
+                                cons.style.display = "block";
+                                
+                                window.setTimeout(() => cons.focus(), 0);
+                            }
+                            
+                            break;
+                        default:
+                            window_focus = !1;
+                    }
+                    
+                    if (window_focus)
+                        document.activeElement.blur();
+                    
+                    draw();
+                };
+                
+                var do_cons = (instr) => {
+                    // dbg cons is only sort of official
+                    // it won't blow up if you use it wrong
+                    // but it's not going to try to be nice
+                    
+                    switch (instr.split(" ")[0].toLowerCase()) {
+                        case "focus":
+                            if (instr.match(/^focus -?\d+n?(,? |:)-?\d+n?((,? |:)0*[01]n?|((,? |:)?s)?)$/i)) {
+                                focus.q = BigInt(instr.match(/\d+/g)[0]);
+                                focus.r = BigInt(instr.match(/\d+/g)[1]);
+                                focus.s = BigInt(instr.match(/\d+/g)[2] || (instr.slice(-1).toLowerCase() == "s" ? "1" : "0"));
+                            
+                                draw();
+                            }
+                            
+                            break;
+                        case "pfocus":
+                            if (instr.match(/^pfocus -?\d+n?(,? |:)-?\d+n?((,? |:)0*[01]n?|((,? |:)?s)?)$/i)) {
+                                p_focus.q = BigInt(instr.match(/\d+/g)[0]);
+                                p_focus.r = BigInt(instr.match(/\d+/g)[1]);
+                                p_focus.s = BigInt(instr.match(/\d+/g)[2] || (instr.slice(-1).toLowerCase() == "s" ? "1" : "0"));
+                                
+                                draw();
+                            }
+                            
+                            break;
+                        case "show":
+                            if (instr.match(/^show( -?\d+n?(,? |:)-?\d+n?((,? |:)0*[01]n?|((,? |:)?s)?)|origin)?$/i)) {
+                                var c_focus = {...focus};
+                                
+                                if (instr.length != 4) {
+                                    if (instr.slice(-6).toLowerCase() == "origin") {
+                                        c_focus = { q: 0n, r: 0n, s: 0n };
+                                    } else {
+                                        c_focus.q = BigInt(instr.match(/-?\d+/g)[0]);
+                                        c_focus.r = BigInt(instr.match(/-?\d+/g)[1]);
+                                        c_focus.s = BigInt(instr.match(/\d+/g)[2] || (instr.slice(-1).toLowerCase() == "s" ? "1" : "0"));
+                                    }
+                                }
+                                
+                                disp_mid = [
+                                    Number(c_focus.q) * width + Number(c_focus.r) * (width / 2) + Number(c_focus.s) * (width / 2),
+                                    Number(c_focus.r) * width * (Math.sqrt(3) / 2) + Number(c_focus.s) * width * (Math.sqrt(3) / 6)
+                                ];
+                                
+                                draw();
+                            }
+                            
+                            break;
+                        case "origin":
+                            if (instr.length == 6) {
+                                focus = { q: 0n, r: 0n, s: 0n };
+
+                                draw();
+                            }
+                            
+                            break;
+                        case "op":
+                            if (instr.match(/^op( -?\d+n?(,? |:)-?\d+n?((,? |:)0*[01]n?|((,? |:)?s)?),?)? -?\d+n?$/i)) {
+                                var ns = instr.match(/-?\d+/g);
+                                
+                                var c_focus = {...focus};
+                                var op;
+                                
+                                if (ns.length == 1) {
+                                    op = BigInt(ns[0]);
+                                } else if (ns.length == 3) {
+                                    c_focus.q = BigInt(ns[0]);
+                                    c_focus.r = BigInt(ns[1]);
+                                    c_focus.s = instr.toLowerCase().includes("s") ? 1n : 0n;
+                                    
+                                    op = BigInt(ns[2]);
+                                } else {
+                                    c_focus.q = BigInt(ns[0]);
+                                    c_focus.r = BigInt(ns[1]);
+                                    c_focus.s = BigInt(ns[2]);
+                                    
+                                    op = BigInt(ns[3]);
+                                }
+                                
+                                pos_to_s_grid(c_focus)[c_focus.s] = options.inf_ins ? op : n216(op);
+                                
+                                if (!is_sim)
+                                    push_param();
+                                
+                                draw();
+                            }
+                            
+                            break;
+                        case "ins":
+                            if (is_sim && instr.match(/^ins( -?\d+n?(,? |:)-?\d+n?((,? |:)0*[01]n?|((,? |:)?s)?),?)? -?\d+n?$/i)) {
+                                var ns = instr.match(/-?\d+/g);
+                                
+                                var c_focus = {...focus};
+                                var ins;
+                                
+                                if (ns.length == 1) {
+                                    ins = BigInt(ns[0]);
+                                } else if (ns.length == 3) {
+                                    c_focus.q = BigInt(ns[0]);
+                                    c_focus.r = BigInt(ns[1]);
+                                    c_focus.s = instr.toLowerCase().includes("s") ? 1n : 0n;
+                                    
+                                    ins = BigInt(ns[2]);
+                                } else {
+                                    c_focus.q = BigInt(ns[0]);
+                                    c_focus.r = BigInt(ns[1]);
+                                    c_focus.s = BigInt(ns[2]);
+                                    
+                                    ins = BigInt(ns[3]);
+                                }
+                                
+                                pos_to_s_grid(c_focus)[c_focus.s + 2n] = options.inf_ins ? ins : n216(ins);
+                                
+                                draw();
+                            }
+                            
+                            break;
+                        case "input":
+                            if (is_sim && instr.match(/^input /i)) {
+                                var c_input;
+                                
+                                try {
+                                    c_input = proc_input(instr.slice(6));
+                                } catch (info) {
+                                    c_input = [];
+                                }
+                                
+                                input = input.concat(c_input);
+                            }
+                            
+                            break;
+                        case "info":
+                            var print = (info) => {
+                                var p_scroll = (io_output.scrollHeight - io_output.offsetHeight - 2) - io_output.scrollTop;
+                                
+                                io_output.value += (io_output.value ? "\n" : "") + info;
+                                
+                                if (p_scroll < 12.5)
+                                    io_output.scrollTo(0, io_output.scrollHeight);
+                            };
+                            
+                            if (instr.match(/^info \w+( .+)?$/i)) {
+                                switch (instr.split(" ")[1].toLowerCase()) {
+                                    case "focus":
+                                        if (instr.length == 10)
+                                            print(focus.q + "n " + focus.r + "n " + focus.s + "n");
+                                        
+                                        break;
+                                    case "pfocus":
+                                        if (instr.length == 11)
+                                            print(p_focus ? p_focus.q + "n " + p_focus.r + "n " + p_focus.s + "n" : "nil");
+                                        
+                                        break;
+                                    case "op":
+                                        if (instr.length == 7) {
+                                            print(pos_to_s_grid(focus)[focus.s] + "n");
+                                        } else if (instr.match(/^info op -?\d+n?(,? |:)-?\d+n?((,? |:)0*[01]n?|((,? |:)?s)?)$/i)) {
+                                            print(pos_to_s_grid({ q: BigInt(instr.match(/\d+/g)[0]), r: BigInt(instr.match(/\d+/g)[1]) })[BigInt(instr.match(/\d+/g)[2] || (instr.slice(-1).toLowerCase() == "s" ? "1" : "0"))] + "n");
+                                        }
+                                        
+                                        break;
+                                    case "ins":
+                                        if (is_sim) {
+                                            var proc_ins = (ins) => ins == null ? "nil" : ins + "n";
+                                            
+                                            if (instr.length == 8) {
+                                                print(proc_ins(pos_to_s_grid(focus)[focus.s + 2n]));
+                                            } else if (instr.match(/^info op -?\d+n?(,? |:)-?\d+n?((,? |:)0*[01]n?|((,? |:)?s)?)$/i)) {
+                                                print(proc_ins(pos_to_s_grid({ q: BigInt(instr.match(/\d+/g)[0]), r: BigInt(instr.match(/\d+/g)[1]) })[BigInt(instr.match(/\d+/g)[2] || (instr.slice(-1).toLowerCase() == "s" ? "1" : "0"))]));
+                                            }
+                                        }
+                                        
+                                        break;
+                                }
+                            }
+                            
+                            break;
+                        case "dbg":
+                            if (instr.match(/^dbg /i)) {
+                                try {
+                                    console.log("dbg: " + instr.slice(4), eval(instr.slice(4)));
+                                } catch (info) {
+                                    console.error(info);
+                                }
+                            }
+                            
+                            break;
+                    }
+                };
+                
+                cons.onkeydown = (info) => {
+                    if ((info.code == "Enter" && !info.shiftKey || info.code == "Escape") && !info.ctrlKey && !info.altKey && !info.metaKey) {
+                        if (info.code == "Enter")
+                            do_cons(cons.value);
+                        
+                        cons.value = "";
+                        cons.style.display = "";
+                        cons.blur();
+                    }
+                };
+                
+                cons.onblur = () => {
+                    if (cons.style.display == "block")
+                        cons.focus();
+                };
+                
+                var is_pin = (pos, found, n) => {
+                    var p_pos = find_pin_pos(pos, 0n, n);
+                    
+                    return (p_pos.q == found.q && p_pos.r == found.r && p_pos.s == found.s);
+                };
+                
+                var p_down = [!1, !1, !1];
+                var p_start = [null, null, null];
+                var p_click = [!0, !0, !0];
+                
+                var orig_disp_mid = null;
+                
+                var do_pick = !0;
+                
+                var prior_nil = null;
+                var prior_nn_c = null;
+                
+                const CLICK_DIST = 8;
+                
+                var find_p_focus = (x, y) => {
+                    var point_off = [x - window.innerWidth / 2 + disp_mid[0], -(y - window.innerHeight / 2) + disp_mid[1]];
+
+                    var p_focus, grid_pos;
+
+                    if ([1, 4].includes((Math.floor(point_off[0] / (width / 6)) % 6 + 6) % 6)) {
+                        var slant = Math.floor(((point_off[1] / ((width / 6) * Math.sqrt(3)) - ((Math.floor(point_off[0] / (width / 6)) % 6 + 6) % 6 == 4 ? 1 : 0)) % 2 + 2) % 2);
+                        var in_pos = [
+                            (point_off[0] / (width / 6) % 1 + 1) % 1,
+                            (point_off[1] / ((width / 6) * Math.sqrt(3)) % 1 + 1) % 1,
+                        ];
+
+                        if (in_pos[0] < (slant ? in_pos[1] : 1 - in_pos[1])) {
+                            point_off[0] -= width / 6;
+                        } else {
+                            point_off[0] += width / 6;
+                        }
+                    }
+
+                    if ([0, 5].includes((Math.floor(point_off[0] / (width / 6)) % 6 + 6) % 6)) {
+                        grid_pos = [
+                            Math.floor(point_off[0] / (width / 2) + 1 / 2),
+                            Math.floor(point_off[1] / ((width / 3) * Math.sqrt(3)) + 1 / 2)
+                        ];
+                    } else if ([2, 3].includes((Math.floor(point_off[0] / (width / 6)) % 6 + 6) % 6)) {
+                        grid_pos = [
+                            Math.floor(point_off[0] / (width / 2) + 1 / 2),
+                            Math.floor(point_off[1] / ((width / 3) * Math.sqrt(3)) - 1)
+                        ];
+                    } else {
+                        grid_pos = null;
+                    }
+
+                    if (grid_pos) {
+                        if ((grid_pos[1] % 3 + 3) % 3 == 0) { // s is 0
+                            p_focus = {
+                                q: BigInt((grid_pos[0] / 2) - ((grid_pos[1] / 3) * 2 + (grid_pos[0] % 2 ? 1 : 0)) / 2),
+                                r: BigInt((grid_pos[1] / 3) * 2 + (grid_pos[0] % 2 ? 1 : 0)),
+                                s: 0n
+                            };
+                        } else if ((grid_pos[1] % 3 + 3) % 3 == 1) { // null
+                            p_focus = null;
+                        } else { // s is 1
+                            p_focus = {
+                                q: BigInt(((grid_pos[0] - 1) / 2) - (((grid_pos[1] + 1) / 3) * 2 - (grid_pos[0] % 2 ? 0 : 1)) / 2),
+                                r: BigInt(((grid_pos[1] + 1) / 3) * 2 - (grid_pos[0] % 2 ? 0 : 1)),
+                                s: 1n
+                            };
+                        }
+                    } else {
+                        p_focus = null;
+                    }
+                    
+                    return p_focus;
+                };
+                
+                display.onmousemove = (info) => {
+                    // width / 3 is the height of the flat top of a small hexagon
+                    
+                    if (!p_down[0] && !is_pick) {
+                        var old_p_focus = p_focus;
+
+                        p_focus = find_p_focus(info.clientX, info.clientY);
+
+                        if (!!p_focus != !!old_p_focus || old_p_focus && p_focus && (old_p_focus.q != p_focus.q || old_p_focus.r != p_focus.r || old_p_focus.s != p_focus.s)) {
+                            if (p_mc && !is_sim) {
+                                var s_grid = pos_to_s_grid(old_p_focus);
+
+                                if (s_grid[old_p_focus.s] / 18n == 0n && s_grid[old_p_focus.s] != 0n)
+                                    s_grid[old_p_focus.s] = 0n;
+
+                                push_param();
+                            }
+                            
+                            p_mc = !1;
+                            
+                            if (p_down[2] && !p_click[2] && p_focus) {
+                                var s_grid = pos_to_s_grid(p_focus);
+                                
+                                if ([0n, 2n, 3n].includes(n216(s_grid[p_focus.s]) / 18n)) {
+                                    if (prior_nil) {
+                                        if (is_pin(prior_nil, p_focus, 0n)) {
+                                            pos_to_s_grid(p_focus)[p_focus.s] = 36n + (prior_nn_c == "o" ? 2n : 1n) * 2n;
+                                        } else if (is_pin(prior_nil, p_focus, 1n)) {
+                                            pos_to_s_grid(p_focus)[p_focus.s] = 36n + (prior_nn_c == "o" ? 0n : 2n) * 2n;
+                                        } else if (is_pin(prior_nil, p_focus, 2n)) {
+                                            pos_to_s_grid(p_focus)[p_focus.s] = 36n + (prior_nn_c == "o" ? 1n : 0n) * 2n;
+                                        }
+                                        
+                                        auto_routing(prior_nil);
+                                    }
+                                    
+                                    prior_nil = {...p_focus};
+                                    prior_nn_c = auto_routing(p_focus);
+                                } else {
+                                    prior_nil = null;
+                                }
+                            }
+                            
+                            window.setTimeout(draw, 0);
+                        }
+                    }
+                    
+                    var point_off = [info.clientX - window.innerWidth / 2, -(info.clientY - window.innerHeight / 2)];
+                    
+                    if (p_down[0] && p_click[0] && Math.hypot(point_off[1] - p_start[0][1], point_off[0] - p_start[0][0]) > CLICK_DIST)
+                        p_click[0] = !1;
+                    
+                    if (p_down[1] && p_click[1] && Math.hypot(point_off[1] - p_start[1][1], point_off[0] - p_start[1][0]) > CLICK_DIST) {
+                        p_click[1] = !1;
+                        
+                        if (p_focus) {
+                            right_copy_pos = {...p_focus};
+                            
+                            draw();
+                        }
+                    }
+                    
+                    if (p_down[2] && p_click[2] && Math.hypot(point_off[1] - p_start[2][1], point_off[0] - p_start[2][0]) > CLICK_DIST) {
+                        p_click[2] = !1;
+                        
+                        if (p_focus) {
+                            var s_grid = pos_to_s_grid(p_focus);
+
+                            if ([0n, 2n, 3n].includes(n216(s_grid[p_focus.s]) / 18n)) {
+                                prior_nil = {...p_focus};
+                                prior_nn_c = auto_routing(p_focus);
+                            }
+                            
+                            draw();
+                        }
+                    }
+                    
+                    if (p_down[0] && !p_click[0]) {
+                        disp_mid[0] = orig_disp_mid[0] - ((info.clientX - window.innerWidth / 2) - p_start[0][0]);
+                        disp_mid[1] = orig_disp_mid[1] - (-(info.clientY - window.innerHeight / 2) - p_start[0][1]);
+                        
+                        window.setTimeout(draw, 0);
+                    }
+                };
+                
+                var show_pick = (pos, long = !0) => {
+                    var point = pos_to_point(pos);
+                    
+                    var top = 0;
+                    var off = 0;
+                    
+                    if (point[1] < 18 + 106.75 + 12 + 21)
+                        top -= 1;
+                    if (point[1] > window.innerHeight - (18 + 114.25 + 12 + 21))
+                        top += 1;
+                    
+                    if (point[0] < 18 + 290 / 2)
+                        off -= 1;
+                    if (point[0] > window.innerWidth - (18 + 290 / 2))
+                        off += 1;
+                    
+                    pick_ops.style.display = "block";
+                    pick_info.style.display = "block";
+                    
+                    pick_ops.style.top = (top == 0 ? point[1] - (106.75 + (off ? 6 : 12 + 21)) : top == 1 ? point[1] - (12 + 114.25) - (106.75 + 12 + 21) : point[1] + (12 + 21)) + "px";
+                    pick_ops.style.left = (off == 0 ? point[0] - (290 / 2) : off == 1 ? point[0] - (290 + 12 + (21 / 2) * Math.sqrt(3)) : point[0] + (12 + (21 / 2) * Math.sqrt(3))) + "px";
+                    
+                    pick_info.style.top = (top == 0 ? point[1] + (off ? 6 : 12 + 21) : top == 1 ? point[1] - (12 + 114.25 + 21) : point[1] + (106.75 + 12 + 21) + 12) + "px";
+                    pick_info.style.left = (off == 0 ? point[0] - (290 / 2) : off == 1 ? point[0] - (290 + 12 + (21 / 2) * Math.sqrt(3)) : point[0] + (12 + (21 / 2) * Math.sqrt(3))) + "px";
+                    
+                    is_pick = long ? 2 : 1;
+                    
+                    pick_pos = pos;
+                };
+                
+                for (var i = 0; i < 12; i++) {
+                    pick_cont.children[i].onclick = ((op) => () => {
+                        var s_grid = pos_to_s_grid(pick_pos);
+                        
+                        s_grid[pick_pos.s] = BigInt(op) * 18n + (s_grid[pick_pos.s] % 6n + 6n) % 6n;
+                        
+                        draw_pick(op, s_grid[pick_pos.s], pick_pos);
+                        
+                        if (!is_sim)
+                            push_param();
+                        
+                        if (is_pick != 2)
+                            drop_pick();
+                        
+                        draw();
+                    })(i);
+                }
+                
+                var p_n_down = (id, info) => {
+                    if (id == 0) {
+                        p_down[0] = !1;
+                        
+                        if (p_click[0]) {
+                            if (p_focus) {
+                                if (mc && !is_sim) {
+                                    var s_grid = pos_to_s_grid(focus);
+                                    
+                                    if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
+                                        s_grid[focus.s] = 0n;
+                                    
+                                    push_param();
+                                }
+                                
+                                focus = p_focus;
+                                
+                                mc = !1;
+                                
+                                draw();
+                            }
+                        } else {
+                            disp_mid[0] = orig_disp_mid[0] - ((info.clientX - window.innerWidth / 2) - p_start[0][0]);
+                            disp_mid[1] = orig_disp_mid[1] - (-(info.clientY - window.innerHeight / 2) - p_start[0][1]);
+                            
+                            draw();
+                        }
+                    }
+                    
+                    if (id == 1) {
+                        p_down[1] = !1;
+                        
+                        if (p_click[1]) {
+                            if (p_focus && do_pick) {
+                                show_pick(p_focus, info.shiftKey);
+                                
+                                draw_pick(Number(n216(pos_to_id(pick_pos)) / 18n), pos_to_id(pick_pos), pick_pos);
+                            }
+                        } else {
+                            if (right_copy_pos && p_focus) {
+                                var s_grid = pos_to_s_grid(right_copy_pos);
+
+                                s_grid[right_copy_pos.s] = pos_to_s_grid(p_focus)[p_focus.s];
+                            }
+                                
+                            right_copy_pos = null;
+
+                            draw();
+                        }
+                    }
+                    
+                    if (id == 2) {
+                        p_down[2] = !1;
+                        
+                        if (p_click[2]) {
+                            var s_grid = pos_to_s_grid(p_focus);
+                            
+                            s_grid[p_focus.s] = n216(s_grid[p_focus.s]) / 6n * 6n + (n216(s_grid[p_focus.s]) % 6n ^ 1n);
+                            
+                            if (!is_sim)
+                                p_mc = !0;
+                            
+                            if (!is_sim)
+                                push_param();
+                            
+                            draw();
+                        } else {
+                            prior_nil = null;
+                            prior_nn_c = null;
+                        }
+                    }
+                };
+                
+                display.onmouseout = (info) => {
+                    if (!is_pick) {
+                        p_focus = null;
+                        
+                        if (right_copy_pos)
+                            right_copy_pos = null; // todo: ~ commands (focus, op, ins, io, find, strip, ...)
+
+                        draw();
+                    }
+                    
+                    if (p_down[0])
+                        p_n_down(0, info);
+                    if (p_down[1])
+                        p_n_down(1, info);
+                    if (p_down[2])
+                        p_n_down(2, info);
+                };
+                
+                display.onmouseover = (info) => {
+                    if (info.buttons & 0b111)
+                        display.onmousedown(info);
+                };
+                
+                display.onmousedown = (info) => {
+                    if (!p_down[0] && (info.buttons & 1)) {
+                        if (is_pick) {
+                            drop_pick();
+                            
+                            display.onmousemove(info);
+                        } else {
+                            p_down[0] = !0;
+                            p_start[0] = [info.clientX - window.innerWidth / 2, -(info.clientY - window.innerHeight / 2)];
+                            p_click[0] = !0;
+
+                            orig_disp_mid = [...disp_mid];
+                        }
+                    }
+                    
+                    if (!p_down[1] && (info.buttons & 2)) {
+                        if (is_pick) {
+                            drop_pick();
+                            
+                            display.onmousemove(info);
+                        }
+                        
+                        p_down[1] = !0;
+                        p_start[1] = [info.clientX - window.innerWidth / 2, -(info.clientY - window.innerHeight / 2)];
+                        p_click[1] = !0;
+                        
+                        do_pick = !0;
+                    }
+                    
+                    if (!p_down[2] && (info.buttons & 4)) {
+                        if (is_pick) {
+                            var old_p_focus = {...p_focus};
+                            
+                            drop_pick();
+                            
+                            display.onmousemove(info);
+                            
+                            if (p_focus && p_focus.q == old_p_focus.q && p_focus.r == old_p_focus.r && p_focus.s == old_p_focus.s)
+                                show_pick(p_focus);
+                        }
+                        
+                        p_down[2] = !0;
+                        p_start[2] = [info.clientX - window.innerWidth / 2, -(info.clientY - window.innerHeight / 2)];
+                        p_click[2] = !0;
+                    }
+                };
+                
+                display.onmouseup = (info) => {
+                    if (p_down[0] && !(info.buttons & 1))
+                        p_n_down(0, info);
+                    if (p_down[1] && !(info.buttons & 2))
+                        p_n_down(1, info);
+                    if (p_down[2] && !(info.buttons & 4))
+                        p_n_down(2, info);
+                };
+                
+                display.ondblclick = (info) => {
+                    /*c_2d.fillStyle = "#aaaaaa";
+                    
+                    c_2d.fillRect(info.clientX - 10, info.clientY - 1, 20, 2);
+                    c_2d.fillRect(info.clientX - 1, info.clientY - 10, 2, 20);
+                    
+                    c_2d.fillStyle = "#aaaaaa";
+                    
+                    c_2d.fillRect(info.clientX - width / 2 - 10, info.clientY + (width / 2) / Math.sqrt(3) - 1, 20, 2);
+                    c_2d.fillRect(info.clientX - width / 2 - 1, info.clientY + (width / 2) / Math.sqrt(3) - 10, 2, 20);*/
+                    
+                    var c_focus = p_focus;
+                    var is_c = !1;
+                    
+                    if (!c_focus) {
+                        c_focus = find_p_focus(info.clientX - width / 2, info.clientY + (width / 2) / Math.sqrt(3));
+                        is_c = !0;
+                    }
+                    
+                    disp_mid = [
+                        Number(c_focus.q) * width + Number(c_focus.r) * (width / 2) + Number(c_focus.s) * (width / 2) + (is_c ? width / 2 : 0),
+                        Number(c_focus.r) * width * (Math.sqrt(3) / 2) + Number(c_focus.s) * width * (Math.sqrt(3) / 6) + (is_c ? (width / 2) / Math.sqrt(3) : 0)
+                    ];
+                    
+                    draw();
+                };
+                
+                display.oncontextmenu = (info) => {
+                    info.preventDefault();
+                };
+                
+                display.addEventListener("wheel", (info) => {
+                    if (Math.abs(info.deltaY) < 1)
+                        return;
+                    
+                    if (!p_focus)
+                        return;
+                    
+                    var s_grid = pos_to_s_grid(p_focus);
+
+                    if (p_down[2]) {
+                        if (!p_click[2] && p_focus) {
+                            auto_routing(p_focus);
+                        }
+                    } else {
+                        if (p_down[1] && !right_copy_pos) {
+                            if (info.deltaY < 0) {
+                                if ((n216(s_grid[p_focus.s]) / 18n == 1n || n216(s_grid[p_focus.s]) / 18n == 11n) && n216(s_grid[p_focus.s]) / 6n % 3n != 0n) {
+                                    s_grid[p_focus.s] = n216(s_grid[p_focus.s]) / 18n * 18n + (n216(s_grid[p_focus.s]) / 6n - 1n) % 3n * 6n + n216(s_grid[p_focus.s]) % 6n;
+                                } else {
+                                    s_grid[p_focus.s] = (n216(s_grid[p_focus.s]) / 18n + 11n) % 12n * 18n + (n216(s_grid[p_focus.s]) / 18n == 2n || n216(s_grid[p_focus.s]) / 18n == 0n ? 2n : 0n) * 6n + n216(s_grid[p_focus.s]) % 6n;
+                                }
+                            } else {
+                                if ((n216(s_grid[p_focus.s]) / 18n == 1n || n216(s_grid[p_focus.s]) / 18n == 11n) && n216(s_grid[p_focus.s]) / 6n % 3n != 2n) {
+                                    s_grid[p_focus.s] = n216(s_grid[p_focus.s]) / 18n * 18n + (n216(s_grid[p_focus.s]) / 6n + 1n) % 3n * 6n + n216(s_grid[p_focus.s]) % 6n;
+                                } else {
+                                    s_grid[p_focus.s] = (n216(s_grid[p_focus.s]) / 18n + 1n) % 12n * 18n + n216(s_grid[p_focus.s]) % 6n;
+                                }
+                            }
+
+                            do_pick = !1;
+                        } else {
+                            s_grid[p_focus.s] = n216(s_grid[p_focus.s]) / 6n * 6n + (n216(s_grid[p_focus.s]) % 6n + (info.shiftKey != (info.deltaY > 0) ? 4n : 2n)) % 6n;
+                        }
+                    }
+
+                    if (!is_sim)
+                        p_mc = !0;
+
+                    if (!is_sim)
+                        push_param();
+                    
+                    draw();
+                }, { passive: !0 });
+                
+                io_input.oninput = (info) => {
+                    if (io_input.classList.contains("wrong"))
+                        io_input.classList.remove("wrong");
+                    
+                    push_param();
+                };
+                
+                io_stringify.onchange = () => {
+                    push_param();
+                };
+                
+                ctrl_start_sim.onclick = () => {
+                    if (is_sim)
+                        return;
+                    
+                    start_sim();
+                    
+                    draw();
+                };
+                
+                ctrl_stop_sim.onclick = () => {
+                    if (!is_sim)
+                        return;
+                    
+                    stop_sim();
+                    
+                    draw();
+                };
+                
+                ctrl_stop_sim_copy.onclick = () => {
+                    if (!is_sim)
+                        return;
+                    
+                    var gs, g;
+
+                    for (gs of sim_grid) {
+                        for (g of gs[1]) {
+                            if (!grid.has(gs[0]))
+                                grid.set(gs[0], new Map());
+
+                            if (grid.get(gs[0]).has(g[0])) {
+                                grid.get(gs[0]).set(g[0], [g[1][0], g[1][1]]);
+                            } else {
+                                grid.get(gs[0]).set(g[0], [g[1][0], g[1][1]]);
+                            }
+                        }
+                    }
+                    
+                    stop_sim();
+                    
+                    push_param();
+                    
+                    draw();
+                };
+                
+                ctrl_quick.onclick = () => {
+                    if (!is_sim)
+                        return;
+                    
+                    if (is_quick) {
+                        window.clearInterval(ci);
+                        
+                        ctrl_quick.textContent = "Start";
+                    } else {
+                        ci = window.setInterval(quick_sim_tick, 1000 / tps);
+                        
+                        ctrl_quick.textContent = "Stop";
+                    }
+                    
+                    is_quick = !is_quick;
+                    
+                    push_param();
+                };
+                
+                ctrl_tick.onclick = () => {
+                    if (!is_sim)
+                        return;
+                    
+                    sim_tick();
+                    
+                    draw();
+                };
+                
+                ctrl_tps.onclick = (info) => {
+                    if (!is_sim)
+                        return;
+                    
+                    var indx = Math.log2(tps) + 2;
+                    
+                    tps = [1 / 4, 1 / 2, 1, 2, 4, 8, 16][info.shiftKey ? (indx + 6) % 7 : (indx + 1) % 7];
+                    
+                    if (is_quick) {
+                        window.clearInterval(ci);
+
+                        ci = window.setInterval(quick_sim_tick, 1000 / tps);
+                    }
+                    
+                    ctrl_tps.querySelector(".option").textContent = ["¼ ticks/s", "½ ticks/s", "1 ticks/s", "2 ticks/s", "4 ticks/s", "8 ticks/s", "16 ticks/s"][Math.log2(tps) + 2];
+                    
+                    push_param();
+                };
+                
+                ctrl_op_priority.onclick = (info) => {
+                    var indx = ["quick", "random", "positional", "dir_priority"].indexOf(options.op_priority);
+                    
+                    options.op_priority = ["quick", "random", "positional", "dir_priority"][info.shiftKey ? (indx + 3) % 4 : (indx + 1) % 4];
+                    
+                    ctrl_op_priority.querySelector(".option").textContent = ({
+                        "quick": "Quick",
+                        "random": "Random",
+                        "positional": "Positional",
+                        "dir_priority": "Dir. priority"
+                    })[options.op_priority];
+                    
+                    push_param();
+                };
+                
+                ctrl_inf_ins.onclick = (info) => {
+                    if (options.inf_ins) {
+                        if (is_sim) {
+                            var gs, g;
+
+                            for (gs of grid) {
+                                for (g of gs[1]) {
+                                    g[1][0] = n216(g[1][0] % 216n + 216n) % 216n;
+                                    g[1][1] = n216(g[1][1] % 216n + 216n) % 216n;
+                                }
+                            }
+
+                            for (gs of sim_grid) {
+                                for (g of gs[1]) {
+                                    g[1][0] = n216(g[1][0]);
+                                    g[1][1] = n216(g[1][1]);
+                                    g[1][2] = g[1][2] == null ? null : n216(g[1][2]);
+                                    g[1][3] = g[1][3] == null ? null : n216(g[1][3]);
+                                }
+                            }
+                            
+                            draw();
+                        }
+                        
+                        ctrl_inf_ins.querySelector(".option").textContent = "On";
+                    } else {
+                        ctrl_inf_ins.querySelector(".option").textContent = "Off";
+                    }
+                    
+                    options.inf_ins = !options.inf_ins;
+                    
+                    push_param();
+                };
+                
+                ctrl_stop_on_finish.onclick = (info) => {
+                    if (options.stop_on_finish) {
+                        ctrl_stop_on_finish.querySelector(".option").textContent = "Off";
+                    } else {
+                        ctrl_stop_on_finish.querySelector(".option").textContent = "On";
+                        
+                        /* if (is_sim) {
+                            var stop = !0;
+
+                            for (gs of sim_grid) {
+                                for (g of gs[1]) {
+                                    if (g[1][2] != null || g[1][3] != null) {
+                                        stop = !1;
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (stop) {
+                                stop_sim();
+                                
+                                draw();
+                            }
+                        } */
+                    }
+                    
+                    options.stop_on_finish = !options.stop_on_finish;
+                    
+                    push_param();
+                };
+            };
+        </script>
+        
+        <script>
+            WebFontConfig = {
+                google: {
+                    families: ["Roboto Mono", "Atkinson Hyperlegible"]
+                },
+                active: () => {
+                    init()
+                },
+                inactive: () => {
+                    console.log("(Not using font Roboto Mono)");
+                    
+                    init();
+                }
+            };
+        </script>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
+        
+        <script>
+            if (!("WebFont" in window)) {
+                console.log("(Not using font Roboto Mono: No Config)");
+                
+                init();
+            }
+        </script>
+    </body>
+</html>
