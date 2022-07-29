@@ -671,8 +671,8 @@
                     s: 0n
                 };
                 
-                var mc = !1;
-                var p_mc = !1;
+                var poss_nil = !1;
+                var p_poss_nil = !1;
                 
                 var p_focus = null;
                 
@@ -1058,6 +1058,9 @@
                     }
                     
                     is_sim = !0;
+                    
+                    poss_nil = !1;
+                    p_poss_nil = !1;
                     
                     sim_grid = new Map([...grid].map(r => [r[0], new Map([...r[1]].map(g => [g[0], [...g[1], null, null]]))]));
                     
@@ -1622,9 +1625,9 @@
                         "iio",
                         "sio",
                         "sio",
-                        "ios",
-                        "ois",
-                        "nos"
+                        "iso",
+                        "osi",
+                        "nso"
                     ];
                     
                     return [
@@ -1773,7 +1776,7 @@
                         case "ArrowLeft":
                         case "KeyA":
                         case "KeyH":
-                            if (mc && !is_sim) {
+                            if (poss_nil && !is_sim) {
                                 var s_grid = pos_to_s_grid(focus);
 
                                 if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
@@ -1787,7 +1790,7 @@
                             if (focus.s == 1n)
                                 focus.q--;
                             
-                            mc = !1;
+                            poss_nil = !1;
                             
                             if (is_pick)
                                 drop_pick();
@@ -1796,7 +1799,7 @@
                         case "ArrowRight":
                         case "KeyD":
                         case "KeyL":
-                            if (mc && !is_sim) {
+                            if (poss_nil && !is_sim) {
                                 var s_grid = pos_to_s_grid(focus);
 
                                 if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
@@ -1810,7 +1813,7 @@
                             if (focus.s == 0n)
                                 focus.q++;
                             
-                            mc = !1;
+                            poss_nil = !1;
                             
                             if (is_pick)
                                 drop_pick();
@@ -1819,7 +1822,7 @@
                         case "ArrowUp":
                         case "KeyW":
                         case "KeyK":
-                            if (mc && !is_sim) {
+                            if (poss_nil && !is_sim) {
                                 var s_grid = pos_to_s_grid(focus);
 
                                 if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
@@ -1834,7 +1837,7 @@
                             if (focus.s == 1n)
                                 focus.q--;
                             
-                            mc = !1;
+                            poss_nil = !1;
                             
                             if (is_pick)
                                 drop_pick();
@@ -1843,7 +1846,7 @@
                         case "ArrowDown":
                         case "KeyS":
                         case "KeyJ":
-                            if (mc && !is_sim) {
+                            if (poss_nil && !is_sim) {
                                 var s_grid = pos_to_s_grid(focus);
 
                                 if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
@@ -1858,7 +1861,7 @@
                             if (focus.s == 0n)
                                 focus.q++;
                             
-                            mc = !1;
+                            poss_nil = !1;
                             
                             if (is_pick)
                                 drop_pick();
@@ -1875,7 +1878,7 @@
                             }
                             
                             if (!is_sim)
-                                mc = !0;
+                                poss_nil = !0;
                             
                             if (!is_sim)
                                 push_param();
@@ -1892,7 +1895,7 @@
                             }
                             
                             if (!is_sim)
-                                mc = !0;
+                                poss_nil = !0;
                             
                             if (!is_sim)
                                 push_param();
@@ -1905,7 +1908,7 @@
                             s_grid[focus.s] = n216(s_grid[focus.s]) / 6n * 6n + (n216(s_grid[focus.s]) % 6n + (!!focus.s != info.shiftKey ? 2n : 4n)) % 6n;
                             
                             if (!is_sim)
-                                mc = !0;
+                                poss_nil = !0;
                             
                             if (!is_sim)
                                 push_param();
@@ -1918,7 +1921,7 @@
                             s_grid[focus.s] = n216(s_grid[focus.s]) / 6n * 6n + (n216(s_grid[focus.s]) % 6n + (!!focus.s != info.shiftKey ? 4n : 2n)) % 6n;
                             
                             if (!is_sim)
-                                mc = !0;
+                                poss_nil = !0;
                             
                             if (!is_sim)
                                 push_param();
@@ -1931,7 +1934,7 @@
                             s_grid[focus.s] = n216(s_grid[focus.s]) / 6n * 6n + (n216(s_grid[focus.s]) % 6n ^ 1n);
                             
                             if (!is_sim)
-                                mc = !0;
+                                poss_nil = !0;
                             
                             if (!is_sim)
                                 push_param();
@@ -2400,7 +2403,7 @@
                         p_focus = find_p_focus(info.clientX, info.clientY);
 
                         if (!!p_focus != !!old_p_focus || old_p_focus && p_focus && (old_p_focus.q != p_focus.q || old_p_focus.r != p_focus.r || old_p_focus.s != p_focus.s)) {
-                            if (p_mc && !is_sim) {
+                            if (p_poss_nil && !is_sim) {
                                 var s_grid = pos_to_s_grid(old_p_focus);
 
                                 if (s_grid[old_p_focus.s] / 18n == 0n && s_grid[old_p_focus.s] != 0n)
@@ -2409,7 +2412,35 @@
                                 push_param();
                             }
                             
-                            p_mc = !1;
+                            p_poss_nil = !1;
+                            
+                            if (p_down[0] && p_click[0])
+                                p_click[0] = !1;
+                            
+                            if (p_down[1] && p_click[1]) {
+                                p_click[1] = !1;
+                                
+                                if (old_p_focus) {
+                                    right_copy_pos = {...old_p_focus};
+
+                                    draw();
+                                }
+                            }
+                            
+                            if (p_down[2] && p_click[2]) {
+                                p_click[2] = !1;
+                                
+                                if (old_p_focus) {
+                                    var s_grid = pos_to_s_grid(old_p_focus);
+
+                                    if ([0n, 2n, 3n].includes(n216(s_grid[old_p_focus.s]) / 18n)) {
+                                        prior_nil = {...old_p_focus};
+                                        prior_nn_c = auto_routing(old_p_focus);
+                                    }
+
+                                    draw();
+                                }
+                            }
                             
                             if (p_down[2] && !p_click[2] && p_focus) {
                                 var s_grid = pos_to_s_grid(p_focus);
@@ -2530,7 +2561,7 @@
                         
                         if (p_click[0]) {
                             if (p_focus) {
-                                if (mc && !is_sim) {
+                                if (poss_nil && !is_sim) {
                                     var s_grid = pos_to_s_grid(focus);
                                     
                                     if (n216(s_grid[focus.s]) / 18n == 0n && s_grid[focus.s] != 0n)
@@ -2541,7 +2572,7 @@
                                 
                                 focus = p_focus;
                                 
-                                mc = !1;
+                                poss_nil = !1;
                                 
                                 draw();
                             }
@@ -2584,7 +2615,7 @@
                             s_grid[p_focus.s] = n216(s_grid[p_focus.s]) / 6n * 6n + (n216(s_grid[p_focus.s]) % 6n ^ 1n);
                             
                             if (!is_sim)
-                                p_mc = !0;
+                                p_poss_nil = !0;
                             
                             if (!is_sim)
                                 push_param();
@@ -2743,7 +2774,7 @@
                     }
 
                     if (!is_sim)
-                        p_mc = !0;
+                        p_poss_nil = !0;
 
                     if (!is_sim)
                         push_param();
