@@ -1534,7 +1534,7 @@
                 };
 
                 var params = () => {
-                    var uri_c = [...(window.location.hash.slice(1).replace(/%7e/i, "~") || "wzJ")];
+                    var uri_c = [...(window.location.hash.slice(1).replace(/%7e/ig, "~") || "wzJ")];
 
                     var n = 0n;
 
