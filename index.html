@@ -1527,7 +1527,7 @@
                         n /= 66n;
                     }
 
-                    window.history.replaceState(void(0), void(0), window.location.pathname + window.location.search + "#" + uri_c);
+                    window.location.replace("#" + uri_c);
                 };
 
                 var params = () => {
