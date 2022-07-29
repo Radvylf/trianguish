@@ -41,78 +41,78 @@ The orientation contains two subfields, rotation and chirality. Rotation is `0n`
 
 **NIL:**
 
-    Image
+![Nil: All pins gray](docs_imgs/nil.png?raw=true "Nil: All pins gray")
 
 NILs (`0n`) are the most basic op, simply outputting NIL to each of their pins.
 
 **Constant:**
 
-    Image
+![Constant: All pins blue](docs_imgs/constant.png?raw=true "Constant: All pins blue")
 
 Constants come in three varieties: 0 (`18n`), 1 (`24n`), and -1 (`30n`). Each of these variants will output their value on all pins. If Mod 216 is on, any -1 constants will wrap around to 215.
 
 **2-Wire:**
 
-    Image
+![2-Wire: Gray, green, and blue pins](docs_imgs/2-wire.png?raw=true "2-Wire: Gray, green, and blue pins")
 
 2-Wires (`36n`) are the most basic way to move values. They have one input pin and one output pin, and will copy their input to their output, with their third pin being NILs.
 
 **Splitter:**
 
-    Image
+![Splitter: One green and two blue pins](docs_imgs/splitter.png?raw=true "Splitter: One green and two blue pins")
 
 Splitters (`54n`) are similar to 2-wires, but output on both of their non-input pins.
 
 **T-Switch:**
 
-    Image
+![T-Switch: Purple, green, and blue pins](docs_imgs/t-switch.png?raw=true "T-Switch: Purple, green, and blue pins")
 
 T-Switches (`72n`) act as conditional wires. If non-NIL input is provided to their third pin (differentiated by color), the input and output pins act as a 2-wire, and otherwise the t-switch acts as a NIL.
 
 **S-Switch:**
 
-    Image
+![S-Switch: Purple, green, and blue pins](docs_imgs/s-switch.png?raw=true "S-Switch: Purple, green, and blue pins")
 
 S-Switches (`90n`) act like two-input wires. They will behave as standard 2-wires, unless their input is NIL, in which case any input to their third pin (differentiated by color) will be outputted. Only if both inputs are NIL will an s-switch output NIL.
 
 **N-Switch:**
 
-    Image
+![N-Switch: Purple, green, and blue pins](docs_imgs/n-switch.png?raw=true "N-Switch: Purple, green, and blue pins")
 
 N-Switches (`108n`) are used for conditionally switching between NIL and non-NIL outputs based on comparison. If the n-switch's two inputs are different, the primary input will be outputted, and otherwise the n-switch's output will be NIL.
 
 **Add:**
 
-    Image
+![Add: Two green and one blue pin](docs_imgs/add.png?raw=true "Add: Two green and one blue pin")
 
 Adds (`126n`) add their inputs. Unlike switches, both inputs to an add are identical. If both inputs are non-NIL, the add will output the sum of its inputs (only wrapping if Mod 216 is on), and otherwise it will output NIL.
 
 **Mul:**
 
-    Image
+![Mul: Two green and one blue pin](docs_imgs/mul.png?raw=true "Add: Two green and one blue pin")
 
 Muls (`144n`) multiply their inputs. Like adds, both inputs to a mul are identical. If both inputs are non-NIL, the mul will output the product of its inputs (only wrapping if Mod 216 is on), and otherwise it will output NIL.
 
 **Cmp:**
 
-    Image
+![Cmp: Purple, green, and blue pins](docs_imgs/cmp.png?raw=true "Cmp: Purple, green, and blue pins")
     
 Cmps (`162n`) compare their two inputs, outputting one of three values to indicate less than, equal to, or greater than. If either input is NIL, the cmp's output will also be NIL. If the primary input to the cmp is less than the secondary input (differentiated by color), the cmp's output is -1 (or 215 if Mod 216 is on), if they are equal it is 0, and if the primary input is greater the output is 1. This is equivalent to taking the sign of the primary input minus the secondary input. Cmps are most useful when chained with n-switches.
 
 **I/o:**
 
-    Image
+![I/o: Purple, green, and blue pins](docs_imgs/cmp.png?raw=true "I/o: Purple, green, and blue pins")
 
 I/os (`180n`) can perform user input and output operations. Their primary input pin is used for output, with any non-NIL input being outputted, and their secondary input pin is used to take input (so that all input is not consumed before it can be properly handled). If the secondary input pin is given a non-NIL value, one value will be taken from user input. This will be outputted on the i/o's output pin, and will always be non-NIL, unless input is exhausted. Once NIL is returned from an i/o's input, all future input operations will return NIL.
 
 **Builders:**
 
-    Image
-    
-    Image
-    
-    Image
+![I-Builder: Green, brown, and blue pins](docs_imgs/i-builder.png?raw=true "I-Builder: Green, brown, and blue pins")
 
+![O-Builder: Blue, brown, and green pins](docs_imgs/o-builder.png?raw=true "O-Builder: Blue, brown, and green pins")
+
+![S-Builder: Gray, brown, and blue pins](docs_imgs/s-builder.png?raw=true "S-Builder: Gray, brown, and blue pins")
+    
 Builders come in three varieties: i-builders (`198n`), o-builders (`204n`), and s-builders (`210n`). Builders are one of the most important ops, as they allow for self-modification, in turn permitting complex timing operations, more efficient storage, randomization or undefined behavior, and short non-NIL pulses. Builders are the only ops to have a build input pin, which when given non-NIL input, will treat their input as a numeric representation of an op to "build" in an adjacent cell before the next tick. Builders will always build one pin clockwise of their build input pin, and the pin adjacent to this cell can have varying purposes. An i-builder or o-builder will double as wires, with i- or o- indicating which end is used as the build cell. Possibly the most important builder type is the s-builder, which has a NIL pin adjecent to its build cell, and an output pin. S-Builders will output the numeric representation of the op in their build cell. This will always be non-NIL. If Mod 216 is off, builders can place ops with IDs outside of the typical range (`0n` to `215n`), and s-builders can read these unchanged.
 
 Fun fact: The original idea for Trianguish, years ago, was for it to simulate living organisms, or other complex macro-scale automata. This would not work, since the density of builders to support ops is likely far too low for self-moving structures to be built.
@@ -121,7 +121,7 @@ Fun fact: The original idea for Trianguish, years ago, was for it to simulate li
 
 During a tick, all ops will update simultaneously. All ops will observe the states of pins around them before any of that tick's changes take place, ensuring that programs work identically when rotated or moved. This has two exceptions, however. First, building will occur after all ops update their pins. This means that the program pictures below, with a 0 constant on the build input pin of a builder, with its build cell being a 1 constant, any ops inputting from the 1 constant will input a `1n`, in the same tick that the constant is replaced by a NIL.
 
-    Image
+![First tick: 1 constant becomes nil, first 2-wire inputs 1n; Second tick: first wire inputs nil, second wire inputs 1n](docs_imgs/timing.gif?raw=true "First tick: 1 constant becomes nil, first 2-wire inputs 1n; Second tick: first wire inputs nil, second wire inputs 1n")
 
 This timing quirk can be used to propagate signals faster or slower than wires, which is essential as the strict structure of the triangular grid makes precise timing difficult or impossible otherwise. The second exception to simultaneous updating is a necessary consequence of i/os and builders existing, that being handling conflicting operations. If two or more builders build in the same cell on the same turn, or two or more i/os take input or produce output in the same tick, the order in which these conflicting actions occur is left to the interpreter as undefined behavior. However, the following behaviors are implemented in the base interpreter as options:
 
