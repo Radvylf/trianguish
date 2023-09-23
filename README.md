@@ -101,7 +101,7 @@ Cmps (`162n`) compare their two inputs, outputting one of three values to indica
 
 **I/o:**
 
-![I/o: Purple, green, and blue pins](docs_imgs/cmp.png?raw=true "I/o: Purple, green, and blue pins")
+![I/o: Purple, green, and blue pins](docs_imgs/i-o.png?raw=true "I/o: Purple, green, and blue pins")
 
 I/os (`180n`) can perform user input and output operations. Their primary input pin is used for output, with any non-NIL input being outputted, and their secondary input pin is used to take input (so that all input is not consumed before it can be properly handled). If the secondary input pin is given a non-NIL value, one value will be taken from user input. This will be outputted on the i/o's output pin, and will always be non-NIL, unless input is exhausted. Once NIL is returned from an i/o's input, all future input operations will return NIL.
 
